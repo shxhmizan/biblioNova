@@ -1,9 +1,5 @@
 """bibliometric-analysis-server: MCP server for the Bibliometric Analyst specialist.
 
-Phase 1 exposes publication_trend() only. citation_analysis() (and full
-author/journal ranking) is added in Phase 2 — until then it must not be
-advertised via tools/list, since agents discover capability dynamically.
-
 Run standalone for manual testing:
     uv run python -m mcp_servers.bibliometric_analysis.server
 """
@@ -23,6 +19,17 @@ def publication_trend(records: list[dict]) -> dict:
         records: Parsed BibTeX records as returned by bibtex-parser-server's parse_bibtex.
     """
     return analysis.publication_trend(records)
+
+
+@mcp.tool()
+def citation_analysis(records: list[dict], top_n: int = 10) -> dict:
+    """Citation totals plus top-cited papers, authors, and journals.
+
+    Args:
+        records: Parsed BibTeX records as returned by bibtex-parser-server's parse_bibtex.
+        top_n: How many top-ranked papers/authors/journals to return.
+    """
+    return analysis.citation_analysis(records, top_n=top_n)
 
 
 if __name__ == "__main__":

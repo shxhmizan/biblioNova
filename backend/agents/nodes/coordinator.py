@@ -90,13 +90,17 @@ async def coordinator_node(
             "needs_clarification": True,
         }
 
-    for skip in decision.skipped:
-        await event_sink("agent_skipped", skip.agent, {"reason": skip.reason})
-
+    # Skip events for non-activated specialists are emitted by each specialist
+    # node itself, lazily, when the sequential pipeline reaches it — this keeps
+    # the live progress stream reading as a real sequence rather than a burst.
     await event_sink(
         "agent_completed",
         "coordinator",
-        {"activated": decision.activated, "justification": decision.justification},
+        {
+            "activated": decision.activated,
+            "skipped": [s.model_dump() for s in decision.skipped],
+            "justification": decision.justification,
+        },
     )
 
     return {

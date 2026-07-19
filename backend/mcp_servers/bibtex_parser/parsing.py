@@ -67,13 +67,24 @@ def _parse_year(entry: dict) -> int | None:
     return int(raw_year) if raw_year.isdigit() else None
 
 
+def _parse_cited_references(entry: dict) -> list[str]:
+    """Optional `cited-references` field: semicolon-separated citation keys this
+    record cites. Not part of standard WoS BibTeX exports (which carry no
+    reference lists) — populated only when the export/converter includes it.
+    Absent for most corpora, in which case co-citation analysis has no data.
+    """
+    raw = entry.get("cited-references", "")
+    return [key.strip() for key in raw.split(";") if key.strip()]
+
+
 def parse_bibtex(content: str) -> dict:
     """Parse raw BibTeX content into validated records, skipping malformed entries.
 
     Returns:
         {
           "records": [{id, entry_type, author, title, journal, year, volume,
-                       number, pages, doi, keywords, times_cited}, ...],
+                       number, pages, doi, keywords, abstract, times_cited,
+                       cited_references}, ...],
           "skipped": [{key, reason}, ...],
           "total_entries_found": int,
           "valid_count": int,
@@ -138,7 +149,9 @@ def parse_bibtex(content: str) -> dict:
                 "pages": entry.get("pages", ""),
                 "doi": entry.get("doi", ""),
                 "keywords": entry.get("keywords", ""),
+                "abstract": entry.get("abstract", ""),
                 "times_cited": _parse_times_cited(entry),
+                "cited_references": _parse_cited_references(entry),
             }
         )
 

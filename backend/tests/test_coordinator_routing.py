@@ -63,8 +63,14 @@ async def test_skip_reasons_are_persisted_in_routing_decision():
     )
 
     assert result["routing_decision"]["skipped"][0]["agent"] == "science_mapping"
-    skip_events = [e for e in events if e[0] == "agent_skipped"]
-    assert skip_events[0][1] == "science_mapping"
+    # The coordinator itself doesn't emit agent_skipped — each specialist node
+    # does that lazily, when the sequential pipeline reaches it (see
+    # agents/nodes/common.py::maybe_skip and the graph/integration tests).
+    assert not any(e[0] == "agent_skipped" for e in events)
+    completed = [e for e in events if e[0] == "agent_completed"][0]
+    assert completed[2]["skipped"] == [
+        {"agent": "science_mapping", "reason": "Goal does not ask about keyword or citation networks."}
+    ]
 
 
 async def test_unanalyzable_goal_returns_clarification_without_activating_anything():
