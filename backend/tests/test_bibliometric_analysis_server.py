@@ -1,9 +1,30 @@
 from mcp_servers.bibliometric_analysis import analysis
 
 RECORDS = [
-    {"id": "a", "title": "A", "author": "Smith, J. and Doe, A.", "journal": "J1", "year": 2020, "times_cited": 10},
-    {"id": "b", "title": "B", "author": "Smith, J.", "journal": "J1", "year": 2021, "times_cited": 5},
-    {"id": "c", "title": "C", "author": "Doe, A. and Lee, K.", "journal": "J2", "year": 2021, "times_cited": 0},
+    {
+        "id": "a",
+        "title": "A",
+        "author": "Smith, J. and Doe, A.",
+        "journal": "J1",
+        "year": 2020,
+        "times_cited": 10,
+    },
+    {
+        "id": "b",
+        "title": "B",
+        "author": "Smith, J.",
+        "journal": "J1",
+        "year": 2021,
+        "times_cited": 5,
+    },
+    {
+        "id": "c",
+        "title": "C",
+        "author": "Doe, A. and Lee, K.",
+        "journal": "J2",
+        "year": 2021,
+        "times_cited": 0,
+    },
 ]
 
 

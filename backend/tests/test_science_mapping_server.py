@@ -1,16 +1,38 @@
 from mcp_servers.science_mapping import analysis
 
 RECORDS_WITH_KEYWORDS = [
-    {"id": "a", "title": "A", "keywords": "agentic AI; LLM; healthcare", "times_cited": 5, "cited_references": []},
-    {"id": "b", "title": "B", "keywords": "agentic AI; multi-agent systems", "times_cited": 2, "cited_references": []},
-    {"id": "c", "title": "C", "keywords": "LLM; healthcare", "times_cited": 1, "cited_references": []},
+    {
+        "id": "a",
+        "title": "A",
+        "keywords": "agentic AI; LLM; healthcare",
+        "times_cited": 5,
+        "cited_references": [],
+    },
+    {
+        "id": "b",
+        "title": "B",
+        "keywords": "agentic AI; multi-agent systems",
+        "times_cited": 2,
+        "cited_references": [],
+    },
+    {
+        "id": "c",
+        "title": "C",
+        "keywords": "LLM; healthcare",
+        "times_cited": 1,
+        "cited_references": [],
+    },
 ]
 
 
 def test_co_occurrence_filters_by_min_frequency():
     result = analysis.co_occurrence_analysis(RECORDS_WITH_KEYWORDS, min_frequency=2)
     node_ids = {n["id"] for n in result["nodes"]}
-    assert node_ids == {"agentic ai", "llm", "healthcare"}  # "multi-agent systems" appears once, filtered out
+    assert node_ids == {
+        "agentic ai",
+        "llm",
+        "healthcare",
+    }  # "multi-agent systems" appears once, filtered out
 
 
 def test_co_occurrence_returns_empty_when_nothing_meets_threshold():

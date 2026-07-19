@@ -69,7 +69,10 @@ async def test_skip_reasons_are_persisted_in_routing_decision():
     assert not any(e[0] == "agent_skipped" for e in events)
     completed = [e for e in events if e[0] == "agent_completed"][0]
     assert completed[2]["skipped"] == [
-        {"agent": "science_mapping", "reason": "Goal does not ask about keyword or citation networks."}
+        {
+            "agent": "science_mapping",
+            "reason": "Goal does not ask about keyword or citation networks.",
+        }
     ]
 
 

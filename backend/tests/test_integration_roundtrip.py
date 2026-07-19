@@ -90,7 +90,10 @@ def test_single_specialist_round_trip(client, monkeypatch):
     assert detail["routing_decision"]["activated"] == ["bibliometric_analyst"]
     assert detail["executive_summary"]
 
-    results = {r["agent_name"]: r["result_json"] for r in client.get(f"/sessions/{session_id}/results").json()}
+    results = {
+        r["agent_name"]: r["result_json"]
+        for r in client.get(f"/sessions/{session_id}/results").json()
+    }
     assert list(results.keys()) == ["bibliometric_analyst"]
     trend = results["bibliometric_analyst"]["publication_trend"]
     assert trend["total_publications"] == 46
@@ -133,7 +136,10 @@ def test_all_specialists_activated_round_trip(client, monkeypatch):
         "text_mining",
     }
 
-    results = {r["agent_name"]: r["result_json"] for r in client.get(f"/sessions/{session_id}/results").json()}
+    results = {
+        r["agent_name"]: r["result_json"]
+        for r in client.get(f"/sessions/{session_id}/results").json()
+    }
     assert set(results.keys()) == {"bibliometric_analyst", "science_mapping", "text_mining"}
 
     co_occurrence = results["science_mapping"]["co_occurrence_analysis"]

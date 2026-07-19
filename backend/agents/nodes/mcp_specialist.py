@@ -80,7 +80,9 @@ async def run_mcp_specialist(
             {"tool": tool.name, "duration_seconds": round(duration, 3)},
         )
 
-    summary = await summarize_specialist(state["goal"], combined_result, summary_prompt_name, summarize_fn)
+    summary = await summarize_specialist(
+        state["goal"], combined_result, summary_prompt_name, summarize_fn
+    )
 
     await event_sink("agent_completed", agent_name, {"tools_called": list(combined_result)})
 

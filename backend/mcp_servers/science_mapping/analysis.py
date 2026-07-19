@@ -47,7 +47,8 @@ def co_occurrence_analysis(records: list[dict], min_frequency: int = 2) -> dict:
         for kw in kept
     ]
     edges = [
-        {"source": a, "target": b, "weight": data["weight"]} for a, b, data in graph.edges(data=True)
+        {"source": a, "target": b, "weight": data["weight"]}
+        for a, b, data in graph.edges(data=True)
     ]
 
     return {"nodes": nodes, "edges": edges, "clusters": len(communities)}
@@ -90,8 +91,6 @@ def cocitation_analysis(records: list[dict]) -> dict:
         {"id": rid, "title": known[rid]["title"], "times_cited": known[rid].get("times_cited", 0)}
         for rid in co_cited_ids
     ]
-    edges = [
-        {"source": a, "target": b, "weight": count} for (a, b), count in pair_counts.items()
-    ]
+    edges = [{"source": a, "target": b, "weight": count} for (a, b), count in pair_counts.items()]
 
     return {"nodes": nodes, "edges": edges}

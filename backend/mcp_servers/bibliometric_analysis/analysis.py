@@ -34,7 +34,9 @@ def citation_analysis(records: list[dict], top_n: int = 10) -> dict:
     """
     total_publications = len(records)
     total_citations = sum(r.get("times_cited", 0) or 0 for r in records)
-    average_citations = round(total_citations / total_publications, 2) if total_publications else 0.0
+    average_citations = (
+        round(total_citations / total_publications, 2) if total_publications else 0.0
+    )
 
     most_cited = sorted(records, key=lambda r: r.get("times_cited", 0) or 0, reverse=True)[:top_n]
     most_cited_papers = [
