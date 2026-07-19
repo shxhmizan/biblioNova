@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Env
+.env
+.env.local
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+
+# Data & generated artifacts
+data/uploads/
+*.pdf
+!data/samples/*.pdf
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Alembic local
+backend/*.db
+backend/*.sqlite3
