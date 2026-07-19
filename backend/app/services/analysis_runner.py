@@ -2,7 +2,7 @@
 
 from agents.graph import build_graph
 from app.db import SessionLocal
-from app.models import AnalysisResult, AnalysisSession
+from app.models import AnalysisResult, AnalysisSession, Report
 from app.services.events import make_db_event_sink
 
 
@@ -47,8 +47,18 @@ async def run_analysis(session_id: str) -> None:
             db.add(AnalysisResult(session_id=session_id, agent_name=agent_name, result_json=result))
 
         summaries = final_state.get("summaries", {})
-        if summaries:
-            session.executive_summary = " ".join(summaries.values())
+        session.executive_summary = summaries.get("insights_reporting") or " ".join(
+            summaries.values()
+        )
+
+        if final_state.get("report_pdf") is not None:
+            db.add(
+                Report(
+                    session_id=session_id,
+                    pdf_bytes=final_state["report_pdf"],
+                    page_count=final_state["report_page_count"],
+                )
+            )
 
         session.status = "completed"
         db.commit()

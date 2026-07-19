@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
+from fastapi.responses import Response
 from sqlalchemy.orm import Session as DBSession
 
 from app.db import get_db
-from app.models import AgentEvent, AnalysisResult, AnalysisSession
+from app.models import AgentEvent, AnalysisResult, AnalysisSession, Report
 from app.schemas import (
     AgentEventResponse,
     AnalysisResultResponse,
@@ -72,3 +73,18 @@ def get_session_results(session_id: str, db: DBSession = Depends(get_db)) -> lis
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return db.query(AnalysisResult).filter(AnalysisResult.session_id == session_id).all()
+
+
+@router.get("/{session_id}/report")
+def get_session_report(session_id: str, db: DBSession = Depends(get_db)) -> Response:
+    session = db.get(AnalysisSession, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    report = db.query(Report).filter(Report.session_id == session_id).first()
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not generated for this session yet")
+    return Response(
+        content=report.pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{session_id}-report.pdf"'},
+    )

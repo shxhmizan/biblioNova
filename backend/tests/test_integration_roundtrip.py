@@ -1,18 +1,21 @@
 """End-to-end round trip: upload sample.bib -> goal -> coordinator routes ->
 activated specialists discover + call MCP tools (or run in-process for Text
-Mining) -> JSON results persisted.
+Mining) -> Insights & Reporting identifies gaps -> Research Advisor maps
+recommendations 1:1 and assembles the PDF report -> everything persisted ->
+report download and grounded chat both work against the stored data.
 
-All LLM calls (routing decision, per-specialist summaries) are faked (no
-network/API key needed); everything else — MCP subprocess discovery,
-tools/call execution, DB persistence, real GMM clustering over fake
-embeddings — is the real thing.
+All LLM calls (routing decision, per-specialist summaries, gap analysis,
+recommendations, chat answers) are faked (no network/API key needed);
+everything else — MCP subprocess discovery, tools/call execution, DB
+persistence, real GMM clustering over fake embeddings, real PDF generation —
+is the real thing.
 """
 
 from pathlib import Path
 
 import numpy as np
 
-from agents.schemas import RoutingDecision
+from agents.schemas import Gap, GapAnalysis, Recommendation, RecommendationSet, RoutingDecision
 from app.services import analysis_runner
 
 SAMPLE_BIB = Path(__file__).resolve().parents[2] / "data" / "samples" / "sample.bib"
@@ -30,6 +33,41 @@ def _fake_embed_fn(texts: list[str]) -> np.ndarray:
     return np.array([base[hash(t) % 4] + rng.normal(scale=0.01, size=8) for t in texts])
 
 
+async def _fake_gap_fn(goal, specialist_results, record_ids):
+    return GapAnalysis(
+        gaps=[
+            Gap(
+                title="Underexplored intersection",
+                evidence=f"Only a handful of the {len(record_ids)} records address this.",
+                confidence="high",
+                supporting_record_ids=record_ids[:2],
+            ),
+            Gap(
+                title="Sparse recent coverage",
+                evidence="Few records in the most recent years address this theme.",
+                confidence="medium",
+                supporting_record_ids=record_ids[2:4],
+            ),
+        ],
+        executive_summary=(
+            "Synthesized executive summary covering all specialist findings and gaps."
+        ),
+    )
+
+
+async def _fake_recommend_fn(goal, gaps):
+    return RecommendationSet(
+        recommendations=[
+            Recommendation(
+                topic=f"Future work addressing: {gap['title']}",
+                rationale=f"Because: {gap['evidence']}",
+                suggested_methodology="Mixed-methods empirical study.",
+            )
+            for gap in gaps
+        ]
+    )
+
+
 def _patch_graph(monkeypatch, decision_fn):
     import agents.graph as graph_module
 
@@ -43,6 +81,8 @@ def _patch_graph(monkeypatch, decision_fn):
             science_mapping_summarize_fn=_fake_summarize_fn,
             text_mining_embed_fn=_fake_embed_fn,
             text_mining_summarize_fn=_fake_summarize_fn,
+            gap_analysis_fn=_fake_gap_fn,
+            recommend_fn=_fake_recommend_fn,
         )
 
     monkeypatch.setattr(analysis_runner, "build_graph", patched_build_graph)
@@ -88,19 +128,32 @@ def test_single_specialist_round_trip(client, monkeypatch):
     detail = client.get(f"/sessions/{session_id}").json()
     assert detail["status"] == "completed"
     assert detail["routing_decision"]["activated"] == ["bibliometric_analyst"]
-    assert detail["executive_summary"]
+    # Insights & Reporting's synthesis is the canonical executive summary.
+    assert detail["executive_summary"] == (
+        "Synthesized executive summary covering all specialist findings and gaps."
+    )
 
     results = {
         r["agent_name"]: r["result_json"]
         for r in client.get(f"/sessions/{session_id}/results").json()
     }
-    assert list(results.keys()) == ["bibliometric_analyst"]
+    # Insights & Reporting and Research Advisor always run once >=1 specialist ran,
+    # even though Science Mapping and Text Mining were skipped here.
+    assert set(results.keys()) == {"bibliometric_analyst", "insights_reporting", "research_advisor"}
+
     trend = results["bibliometric_analyst"]["publication_trend"]
     assert trend["total_publications"] == 46
     assert trend["year_range"] == [2015, 2026]
     citations = results["bibliometric_analyst"]["citation_analysis"]
     assert citations["total_publications"] == 46
     assert len(citations["top_authors"]) > 0
+
+    gaps = results["insights_reporting"]["gaps"]
+    assert [g["id"] for g in gaps] == ["gap-1", "gap-2"]
+
+    recommendations = results["research_advisor"]["recommendations"]
+    assert len(recommendations) == len(gaps)
+    assert [r["addresses_gap_id"] for r in recommendations] == ["gap-1", "gap-2"]
 
     events = client.get(f"/sessions/{session_id}/events").json()
     event_types = [e["event_type"] for e in events]
@@ -109,6 +162,25 @@ def test_single_specialist_round_trip(client, monkeypatch):
 
     skipped = {e["agent_name"] for e in events if e["event_type"] == "agent_skipped"}
     assert skipped == {"science_mapping", "text_mining"}
+
+    report_response = client.get(f"/sessions/{session_id}/report")
+    assert report_response.status_code == 200
+    assert report_response.headers["content-type"] == "application/pdf"
+    assert report_response.content[:4] == b"%PDF"
+
+    async def fake_answer_question(session, results, question, answer_fn=None):
+        return f"Grounded answer to: {question}"
+
+    import app.routers.chat as chat_router
+
+    monkeypatch.setattr(chat_router, "answer_question", fake_answer_question)
+
+    chat_response = client.post(f"/sessions/{session_id}/chat", json={"question": "How many gaps?"})
+    assert chat_response.status_code == 200
+    assert chat_response.json()["answer"] == "Grounded answer to: How many gaps?"
+
+    history = client.get(f"/sessions/{session_id}/chat").json()
+    assert [m["role"] for m in history] == ["user", "assistant"]
 
 
 def test_all_specialists_activated_round_trip(client, monkeypatch):
@@ -140,7 +212,13 @@ def test_all_specialists_activated_round_trip(client, monkeypatch):
         r["agent_name"]: r["result_json"]
         for r in client.get(f"/sessions/{session_id}/results").json()
     }
-    assert set(results.keys()) == {"bibliometric_analyst", "science_mapping", "text_mining"}
+    assert set(results.keys()) == {
+        "bibliometric_analyst",
+        "science_mapping",
+        "text_mining",
+        "insights_reporting",
+        "research_advisor",
+    }
 
     co_occurrence = results["science_mapping"]["co_occurrence_analysis"]
     assert len(co_occurrence["nodes"]) > 0
@@ -149,5 +227,12 @@ def test_all_specialists_activated_round_trip(client, monkeypatch):
     assert results["text_mining"]["n_clusters"] > 0
     assert sum(c["size"] for c in clusters) == 46
 
+    assert len(results["insights_reporting"]["gaps"]) == 2
+    assert len(results["research_advisor"]["recommendations"]) == 2
+
     events = client.get(f"/sessions/{session_id}/events").json()
     assert not any(e["event_type"] == "agent_skipped" for e in events)
+
+    report_response = client.get(f"/sessions/{session_id}/report")
+    assert report_response.status_code == 200
+    assert report_response.content[:4] == b"%PDF"

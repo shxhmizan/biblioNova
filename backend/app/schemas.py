@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CorpusStats(BaseModel):
@@ -60,3 +60,20 @@ class AnalysisResultResponse(BaseModel):
 class AnalyzeTriggerResponse(BaseModel):
     id: str
     status: str
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=2000)
+
+
+class ChatResponse(BaseModel):
+    question: str
+    answer: str
+
+
+class ChatMessageResponse(BaseModel):
+    role: str
+    content: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

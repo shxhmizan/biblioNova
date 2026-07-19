@@ -13,4 +13,7 @@ class GraphState(TypedDict, total=False):
     results: dict[str, Any]  # agent_name -> result JSON
     summaries: dict[str, str]  # agent_name -> natural-language summary
 
+    report_pdf: bytes
+    report_page_count: int
+
     error: str | None

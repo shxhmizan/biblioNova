@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import JSON, DateTime, ForeignKey, String, Text
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, LargeBinary, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -45,6 +45,12 @@ class AnalysisSession(Base):
     results: Mapped[list["AnalysisResult"]] = relationship(
         back_populates="session", cascade="all, delete-orphan"
     )
+    report: Mapped["Report | None"] = relationship(
+        back_populates="session", cascade="all, delete-orphan", uselist=False
+    )
+    chat_messages: Mapped[list["ChatMessage"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
 
 
 class AgentEvent(Base):
@@ -75,3 +81,31 @@ class AnalysisResult(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
     session: Mapped[AnalysisSession] = relationship(back_populates="results")
+
+
+class Report(Base):
+    """Generated PDF report for a session — one per session."""
+
+    __tablename__ = "reports"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id"), unique=True)
+    pdf_bytes: Mapped[bytes] = mapped_column(LargeBinary)
+    page_count: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    session: Mapped[AnalysisSession] = relationship(back_populates="report")
+
+
+class ChatMessage(Base):
+    """One turn of the read-only, analysis-grounded chat for a session."""
+
+    __tablename__ = "chat_messages"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id"))
+    role: Mapped[str] = mapped_column(String(16))  # "user" | "assistant"
+    content: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    session: Mapped[AnalysisSession] = relationship(back_populates="chat_messages")
