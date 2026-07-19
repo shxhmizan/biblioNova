@@ -16,6 +16,7 @@ class CorpusStats(BaseModel):
 
 class SessionCreateResponse(BaseModel):
     id: str
+    name: str
     filename: str
     goal: str
     status: str
@@ -27,6 +28,7 @@ class SessionCreateResponse(BaseModel):
 
 class SessionDetailResponse(BaseModel):
     id: str
+    name: str
     filename: str
     goal: str
     status: str
@@ -38,6 +40,22 @@ class SessionDetailResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SessionListItemResponse(BaseModel):
+    id: str
+    name: str
+    filename: str
+    goal: str
+    status: str
+    routing_decision: dict | None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SessionRenameRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
 
 
 class AgentEventResponse(BaseModel):

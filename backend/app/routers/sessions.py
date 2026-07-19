@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
 from fastapi.responses import Response
 from sqlalchemy.orm import Session as DBSession
@@ -9,6 +11,8 @@ from app.schemas import (
     AnalysisResultResponse,
     SessionCreateResponse,
     SessionDetailResponse,
+    SessionListItemResponse,
+    SessionRenameRequest,
 )
 from app.services.mcp_tools import parse_and_extract
 
@@ -33,6 +37,7 @@ async def create_session(
     parsed = await parse_and_extract(raw_bib)
 
     session = AnalysisSession(
+        name=Path(file.filename).stem,
         filename=file.filename,
         goal=goal,
         status="uploaded",
@@ -46,12 +51,39 @@ async def create_session(
     return session
 
 
+@router.get("", response_model=list[SessionListItemResponse])
+def list_sessions(db: DBSession = Depends(get_db)) -> list[AnalysisSession]:
+    return db.query(AnalysisSession).order_by(AnalysisSession.created_at.desc()).all()
+
+
 @router.get("/{session_id}", response_model=SessionDetailResponse)
 def get_session(session_id: str, db: DBSession = Depends(get_db)) -> AnalysisSession:
     session = db.get(AnalysisSession, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return session
+
+
+@router.patch("/{session_id}", response_model=SessionDetailResponse)
+def rename_session(
+    session_id: str, body: SessionRenameRequest, db: DBSession = Depends(get_db)
+) -> AnalysisSession:
+    session = db.get(AnalysisSession, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session.name = body.name
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.delete("/{session_id}", status_code=204)
+def delete_session(session_id: str, db: DBSession = Depends(get_db)) -> None:
+    session = db.get(AnalysisSession, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    db.delete(session)
+    db.commit()
 
 
 @router.get("/{session_id}/events", response_model=list[AgentEventResponse])

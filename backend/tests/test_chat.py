@@ -5,6 +5,7 @@ from app.services.chat import answer_question, build_grounding_context
 def _session():
     return AnalysisSession(
         id="s1",
+        name="sample",
         filename="sample.bib",
         goal="Find gaps in agentic AI research.",
         status="completed",

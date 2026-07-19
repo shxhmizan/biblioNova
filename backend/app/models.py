@@ -21,6 +21,7 @@ class AnalysisSession(Base):
     __tablename__ = "sessions"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    name: Mapped[str] = mapped_column(String(255))
     filename: Mapped[str] = mapped_column(String(255))
     goal: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(32), default="uploaded")
