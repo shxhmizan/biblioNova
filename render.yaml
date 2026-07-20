@@ -1,0 +1,63 @@
+# Render Blueprint — provisions the whole stack in one go.
+#
+# In the Render dashboard: New -> Blueprint -> pick this repo. Render reads
+# this file and creates the database + both services below. You'll be
+# prompted for OPENROUTER_API_KEY (marked `sync: false`) during setup.
+#
+# MCP servers need no service of their own — they're spawned as stdio
+# subprocesses of the backend process itself (see backend/app/mcp_registry.py),
+# so they just need to ship inside the backend's own filesystem, which they do.
+#
+# After the first deploy, double-check the two URLs below actually match what
+# Render assigned (`biblioagent-backend`/`biblioagent-frontend` are only
+# guaranteed if those exact subdomains weren't already taken by someone else).
+# If Render appended a random suffix, update NEXT_PUBLIC_API_BASE_URL and
+# CORS_ALLOW_ORIGINS to the real URLs and redeploy both services.
+
+databases:
+  - name: biblioagent-db
+    databaseName: biblioagent
+    user: biblioagent
+    plan: free # 30-day expiry on the free tier — see the deployment notes.
+    region: oregon
+
+services:
+  - type: web
+    name: biblioagent-backend
+    runtime: python
+    plan: free # 512MB RAM — bump to `standard` if you see OOM kills in logs.
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    preDeployCommand: uv run alembic upgrade head
+    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: biblioagent-db
+          property: connectionString
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-4o-mini
+      - key: CORS_ALLOW_ORIGINS
+        value: https://biblioagent-frontend.onrender.com
+
+  - type: web
+    name: biblioagent-frontend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: NEXT_PUBLIC_API_MODE
+        value: real
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://biblioagent-backend.onrender.com
