@@ -3,7 +3,16 @@
 import * as React from "react";
 import { use } from "react";
 import { useTheme } from "next-themes";
-import { BarChart3, BookOpen, CalendarRange, Download, FileText, Users } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  CalendarRange,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  FileText,
+  Users,
+} from "lucide-react";
 import { Topbar } from "@/components/layout/topbar";
 import { SectionNav } from "@/components/section-nav";
 import { StatCard } from "@/components/stat-card";
@@ -13,6 +22,7 @@ import { RecommendationCard } from "@/components/recommendation-card";
 import { NotRunPlaceholder } from "@/components/not-run-placeholder";
 import { NetworkGraph } from "@/components/network-graph";
 import { ChatDrawer } from "@/components/chat-drawer";
+import { McpLogLine } from "@/components/mcp-log-line";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -33,6 +43,7 @@ import { CLUSTER_THEMES as SCIENCE_MAPPING_CLUSTER_LABELS } from "@/lib/mock/net
 import { MOCK_CHAT_PAIRS } from "@/lib/mock/chat";
 import { api } from "@/lib/api";
 import type {
+  AgentEvent,
   AnalysisResult,
   BibliometricAnalystResult,
   InsightsReportingResult,
@@ -50,6 +61,7 @@ const SECTIONS = [
   { id: "gaps", label: "Research Gaps" },
   { id: "recommendations", label: "Recommendations" },
   { id: "report", label: "Report" },
+  { id: "activity-log", label: "Activity Log" },
 ] as const;
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -59,14 +71,19 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
   const [session, setSession] = React.useState<SessionDetail | null>(null);
   const [results, setResults] = React.useState<AnalysisResult[]>([]);
+  const [events, setEvents] = React.useState<AgentEvent[]>([]);
+  const [logOpen, setLogOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    Promise.all([api.getSession(id), api.getSessionResults(id)]).then(([s, r]) => {
-      setSession(s);
-      setResults(r);
-      setLoading(false);
-    });
+    Promise.all([api.getSession(id), api.getSessionResults(id), api.getSessionEvents(id)]).then(
+      ([s, r, e]) => {
+        setSession(s);
+        setResults(r);
+        setEvents(e);
+        setLoading(false);
+      }
+    );
   }, [id]);
 
   if (loading || !session) {
@@ -366,6 +383,30 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 <Download className="size-4" />
                 Download
               </Button>
+            )}
+          </div>
+        </section>
+
+        {/* Activity Log — the full persisted event trace (agent starts/skips/
+            completions plus every genuine MCP tools/list & tools/call), kept
+            around after the run finishes since it's also the thesis
+            evaluation data, not just a live-progress artifact. */}
+        <section id="activity-log" className="scroll-mt-16 space-y-4">
+          <h2 className="text-lg font-semibold">Activity Log</h2>
+          <div className="rounded-lg border bg-card">
+            <button
+              onClick={() => setLogOpen((v) => !v)}
+              className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground"
+            >
+              {events.length} event{events.length === 1 ? "" : "s"} recorded for this session
+              {logOpen ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+            </button>
+            {logOpen && (
+              <div className="max-h-96 space-y-1 overflow-y-auto border-t px-4 py-3">
+                {events.map((event, i) => (
+                  <McpLogLine key={i} event={event} />
+                ))}
+              </div>
             )}
           </div>
         </section>

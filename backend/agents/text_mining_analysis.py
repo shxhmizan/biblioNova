@@ -39,7 +39,31 @@ def _label_cluster(texts: list[str]) -> list[str]:
 
 
 def cluster_records(records: list[dict], embeddings: np.ndarray, n_clusters: int) -> dict:
-    """Fit a Gaussian Mixture Model over embeddings and build labeled cluster summaries."""
+    """Fit a Gaussian Mixture Model over embeddings and build labeled cluster summaries.
+
+    Falls back to a single degenerate cluster when there are too few records to
+    fit a GMM at all — sklearn requires >= 2 samples regardless of n_components,
+    so a 1-record corpus (or 0) must degrade gracefully rather than crash.
+    """
+    if len(records) < 2:
+        if not records:
+            return {"n_clusters": 0, "clusters": []}
+        titles = [r["title"] for r in records]
+        top_keywords = _label_cluster(titles)
+        return {
+            "n_clusters": 1,
+            "clusters": [
+                {
+                    "cluster_id": 0,
+                    "label": ", ".join(top_keywords) if top_keywords else "All records",
+                    "size": len(records),
+                    "top_keywords": top_keywords,
+                    "representative_titles": titles[:3],
+                    "record_ids": [r["id"] for r in records],
+                }
+            ],
+        }
+
     gmm = GaussianMixture(n_components=n_clusters, random_state=42)
     labels = gmm.fit_predict(embeddings)
     probabilities = gmm.predict_proba(embeddings)

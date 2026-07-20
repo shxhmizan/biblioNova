@@ -34,3 +34,21 @@ def test_cluster_records_assigns_every_record_and_labels_clusters():
     for cluster in result["clusters"]:
         assert cluster["label"]
         assert len(cluster["representative_titles"]) <= 3
+
+
+def test_cluster_records_degrades_gracefully_for_single_record_corpus():
+    # sklearn's GaussianMixture requires >= 2 samples regardless of
+    # n_components — a 1-record corpus must not crash the pipeline.
+    records = [{"id": "a", "title": "Agentic AI planning methods"}]
+    embeddings = np.random.default_rng(0).normal(size=(1, 384))
+
+    result = cluster_records(records, embeddings, n_clusters=1)
+
+    assert result["n_clusters"] == 1
+    assert result["clusters"][0]["size"] == 1
+    assert result["clusters"][0]["record_ids"] == ["a"]
+
+
+def test_cluster_records_handles_empty_corpus():
+    result = cluster_records([], np.empty((0, 384)), n_clusters=1)
+    assert result == {"n_clusters": 0, "clusters": []}

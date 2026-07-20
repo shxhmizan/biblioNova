@@ -3,12 +3,14 @@
 import * as React from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Topbar } from "@/components/layout/topbar";
 import { AgentCard } from "@/components/agent-card";
 import { McpLogLine } from "@/components/mcp-log-line";
+import { LinkButton } from "@/components/link-button";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { api, API_MODE } from "@/lib/api";
 import { MOCK_PROGRESS_TIMELINE } from "@/lib/mock";
 import {
@@ -77,6 +79,12 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
     let redirectTimer: ReturnType<typeof setTimeout> | undefined;
     startRef.current = Date.now();
 
+    // This poll loop only drives what THIS TAB shows — the analysis itself
+    // runs as a background task on the server (see
+    // backend/app/services/analysis_runner.py) and keeps going to
+    // completion whether or not anyone is watching. Leaving this page (or
+    // closing the tab) just stops polling; it never stops the run. Coming
+    // back here, or to Sessions, picks up wherever the server actually is.
     async function poll() {
       const [sess, evts] = await Promise.all([api.getSession(id), api.getSessionEvents(id)]);
       if (cancelled) return;
@@ -105,17 +113,14 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
   }, [id, router]);
 
   React.useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [events]);
+    if (logOpen) logEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [events, logOpen]);
 
   const agentStates = deriveAgentStates(events);
   const doneOrSkipped = PIPELINE_AGENTS.filter((a) =>
     ["done", "skipped"].includes(agentStates[a].state)
   ).length;
   const progressPct = Math.round((doneOrSkipped / PIPELINE_AGENTS.length) * 100);
-  const logEvents = events.filter(
-    (e) => e.event_type === "tool_discovered" || e.event_type === "tool_called"
-  );
 
   // Demo-only enrichment: the real backend has no incremental "reasoning" event
   // type (the Coordinator's LLM call isn't streamed), so this only appears in
@@ -129,6 +134,7 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
 
   const routingDecision = session?.routing_decision ?? null;
   const needsClarification = routingDecision?.clarification_needed ?? false;
+  const failed = session?.status === "failed";
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -138,6 +144,17 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
       />
 
       <div className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-6 md:px-6">
+        {failed && (
+          <Alert variant="destructive">
+            <AlertTriangle className="size-4" />
+            <AlertTitle>This analysis failed</AlertTitle>
+            <AlertDescription>
+              {session?.error_message ??
+                "Something went wrong partway through. The steps that completed below are still accurate."}
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Coordinator decision card */}
         <div className="rounded-lg border bg-card p-5">
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -183,9 +200,14 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
           )}
 
           {needsClarification && (
-            <div className="mt-4 rounded-md border border-dashed bg-muted/30 p-3 text-sm text-muted-foreground">
-              {routingDecision?.clarification_message ??
-                "This goal needs clarification before analysis can run."}
+            <div className="mt-4 space-y-3 border-t pt-4">
+              <div className="rounded-md border border-dashed bg-muted/30 p-3 text-sm text-muted-foreground">
+                {routingDecision?.clarification_message ??
+                  "This goal needs clarification before analysis can run."}
+              </div>
+              <LinkButton href="/analyze" size="sm" variant="outline">
+                Try a different goal
+              </LinkButton>
             </div>
           )}
         </div>
@@ -205,21 +227,23 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
               ))}
             </div>
 
-            {/* MCP activity log */}
+            {/* Process log — every agent_started/skipped/completed and MCP
+                tool_discovered/tool_called event, in order, persisted
+                server-side so it's inspectable even after the run finishes. */}
             <div className="rounded-lg border bg-card">
               <button
                 onClick={() => setLogOpen((v) => !v)}
                 className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground"
               >
-                MCP activity log
+                Process log
                 {logOpen ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
               </button>
               {logOpen && (
-                <div className="max-h-56 space-y-1 overflow-y-auto border-t px-4 py-3">
-                  {logEvents.length === 0 && (
-                    <p className="text-xs text-muted-foreground">Waiting for tool calls…</p>
+                <div className="max-h-72 space-y-1 overflow-y-auto border-t px-4 py-3">
+                  {events.length === 0 && (
+                    <p className="text-xs text-muted-foreground">Waiting for the first step…</p>
                   )}
-                  {logEvents.map((event, i) => (
+                  {events.map((event, i) => (
                     <McpLogLine key={i} event={event} />
                   ))}
                   <div ref={logEndRef} />
@@ -234,13 +258,23 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
       <div className="sticky bottom-14 z-20 space-y-2 border-t bg-background/95 px-4 py-4 backdrop-blur md:bottom-0 md:px-6">
         <div className="mx-auto flex max-w-4xl items-center gap-4">
           <Progress value={progressPct} className="h-1.5 flex-1" />
+          <span className="w-10 shrink-0 font-mono-tabular text-xs text-muted-foreground">
+            {progressPct}%
+          </span>
           <span className="w-14 shrink-0 font-mono-tabular text-xs text-muted-foreground">
             {formatElapsed(elapsedMs)}
           </span>
-          <Button variant="ghost" size="sm" onClick={() => router.push("/analyze")}>
-            <X className="size-3.5" />
-            Cancel
-          </Button>
+          {!failed && !needsClarification && session?.status !== "completed" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/sessions")}
+              title="The analysis keeps running on the server — you can check back any time from Sessions."
+            >
+              Run in background
+              <ArrowRight className="size-3.5" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -27,7 +27,12 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { LinkButton } from "@/components/link-button";
 import { api } from "@/lib/api";
-import { AGENT_LABELS, SPECIALIST_AGENTS, type SessionListItem } from "@/lib/types";
+import {
+  AGENT_LABELS,
+  SPECIALIST_AGENTS,
+  type SessionListItem,
+  type SessionStatusValue,
+} from "@/lib/types";
 
 const AGENT_INITIALS: Record<string, string> = {
   bibliometric_analyst: "BA",
@@ -41,6 +46,17 @@ function formatDate(iso: string): string {
     month: "short",
     day: "numeric",
   });
+}
+
+// "running" sessions keep executing server-side even after a user navigates
+// away (see backend/app/services/analysis_runner.py, a plain FastAPI
+// background task) — clicking back in should resume watching progress, not
+// hit a results page with nothing to show yet. failed/needs_clarification
+// sessions also route here since that's where their terminal-state UI lives.
+function sessionHref(session: { id: string; status: SessionStatusValue }): string {
+  return session.status === "completed"
+    ? `/analyze/${session.id}`
+    : `/analyze/${session.id}/progress`;
 }
 
 export default function SessionsPage() {
@@ -104,7 +120,7 @@ export default function SessionsPage() {
                   <TableRow
                     key={session.id}
                     className="cursor-pointer"
-                    onClick={() => router.push(`/analyze/${session.id}`)}
+                    onClick={() => router.push(sessionHref(session))}
                   >
                     <TableCell>
                       <p className="font-medium text-foreground">{session.name}</p>
