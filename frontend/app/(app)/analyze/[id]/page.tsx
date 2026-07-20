@@ -71,7 +71,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
   if (loading || !session) {
     return (
-      <div className="mx-auto max-w-4xl space-y-4 px-4 py-8 md:px-6">
+      <div className="mx-auto max-w-7xl space-y-4 px-4 py-8 md:px-6">
         <Skeleton className="h-8 w-2/3" />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -115,7 +115,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         }))}
       />
 
-      <div className="mx-auto max-w-4xl space-y-12 px-4 py-8 md:px-6">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-8 md:px-6">
         {/* Overview */}
         <section id="overview" className="scroll-mt-16 space-y-4">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -299,7 +299,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                   mode={mode}
                 />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {textMining.clusters.map((cluster) => (
                   <ClusterCard key={cluster.cluster_id} cluster={cluster} mode={mode} />
                 ))}
@@ -328,7 +328,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           {!advisor ? (
             <NotRunPlaceholder />
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {advisor.recommendations.map((rec, i) => (
                 <RecommendationCard
                   key={i}

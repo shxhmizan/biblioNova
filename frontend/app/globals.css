@@ -148,8 +148,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
     @apply bg-background text-foreground;
+    /* Hard guarantee: the page itself never scrolls horizontally. Wide
+       content (tables, network graphs, nav pills) must scroll inside its
+       own overflow-x-auto container instead. */
+    overflow-x: hidden;
+    max-width: 100%;
   }
   html {
     @apply font-sans;

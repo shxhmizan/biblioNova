@@ -64,7 +64,7 @@ export default function SessionsPage() {
     <div className="min-h-svh">
       <Topbar breadcrumb={[{ label: "Sessions" }]} />
 
-      <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6">
         {sessions === null && (
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, i) => (

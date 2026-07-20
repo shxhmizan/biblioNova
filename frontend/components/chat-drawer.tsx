@@ -94,7 +94,7 @@ export function ChatDrawer({
           </SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="flex-1 px-4 py-4">
+        <ScrollArea className="min-h-0 flex-1 px-4 py-4">
           {messages.length === 0 && (
             <p className="mb-4 text-sm text-muted-foreground">
               Grounded only in this session&apos;s stored analysis — I won&apos;t re-run agents or
@@ -106,7 +106,7 @@ export function ChatDrawer({
               <div
                 key={i}
                 className={cn(
-                  "max-w-[85%] rounded-lg px-3 py-2 text-sm",
+                  "max-w-[85%] break-words rounded-lg px-3 py-2 text-sm",
                   m.role === "user"
                     ? "ml-auto bg-primary text-primary-foreground"
                     : "bg-muted text-foreground"
