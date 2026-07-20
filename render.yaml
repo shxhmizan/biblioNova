@@ -29,8 +29,11 @@ services:
     region: oregon
     rootDir: backend
     buildCommand: pip install uv && uv sync --frozen --no-dev
-    preDeployCommand: uv run alembic upgrade head
-    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # Pre-Deploy Command needs a paid instance type — on the free plan
+    # (default here) migrations run at boot instead, chained into the start
+    # command. `alembic upgrade head` is a no-op once the DB is current, so
+    # this is harmless on every restart, not just real deploys.
+    startCommand: uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
