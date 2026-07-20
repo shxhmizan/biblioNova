@@ -72,6 +72,7 @@ async def research_advisor_node(
         goal=state["goal"],
         corpus_stats=state["corpus_stats"],
         summaries=state.get("summaries", {}),
+        results=state.get("results", {}),
         gap_analysis=state["results"]["insights_reporting"],
         recommendations=recommendations,
     )

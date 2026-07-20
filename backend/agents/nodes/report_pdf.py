@@ -9,11 +9,23 @@ from pypdf import PdfReader
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+from agents.nodes.report_figures import (
+    citations_bar_figure,
+    co_occurrence_network_figure,
+    publication_trend_figure,
+)
 
 _STYLES = getSampleStyleSheet()
 
 _CONFIDENCE_LABEL = {"high": "High confidence", "medium": "Medium confidence"}
+
+
+def _figure_image(png_bytes: bytes | None, width_in: float, height_in: float) -> Image | None:
+    if png_bytes is None:
+        return None
+    return Image(io.BytesIO(png_bytes), width=width_in * inch, height=height_in * inch)
 
 
 def generate_report_pdf(
@@ -21,6 +33,7 @@ def generate_report_pdf(
     goal: str,
     corpus_stats: dict,
     summaries: dict[str, str],
+    results: dict,
     gap_analysis: dict,
     recommendations: list[dict],
 ) -> tuple[bytes, int]:
@@ -56,6 +69,34 @@ def generate_report_pdf(
             continue
         story.append(Paragraph(title, _STYLES["Heading1"]))
         story.append(Paragraph(summaries[agent_name], _STYLES["BodyText"]))
+        story.append(Spacer(1, 0.1 * inch))
+
+        if agent_name == "bibliometric_analyst":
+            trend = results.get("bibliometric_analyst", {}).get("publication_trend")
+            if trend and trend.get("years"):
+                pub_image = _figure_image(
+                    publication_trend_figure(trend["years"], trend["publications_per_year"]), 5, 2.5
+                )
+                cite_image = _figure_image(
+                    citations_bar_figure(trend["years"], trend["citations_per_year"]), 5, 2.5
+                )
+                if pub_image:
+                    story.append(pub_image)
+                    story.append(Spacer(1, 0.1 * inch))
+                if cite_image:
+                    story.append(cite_image)
+
+        if agent_name == "science_mapping":
+            co_occurrence = results.get("science_mapping", {}).get("co_occurrence_analysis")
+            if co_occurrence and co_occurrence.get("nodes"):
+                network_image = _figure_image(
+                    co_occurrence_network_figure(co_occurrence["nodes"], co_occurrence["edges"]),
+                    5.6,
+                    4.5,
+                )
+                if network_image:
+                    story.append(network_image)
+
         story.append(Spacer(1, 0.15 * inch))
 
     gaps = gap_analysis.get("gaps", [])
