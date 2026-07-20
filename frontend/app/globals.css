@@ -153,8 +153,15 @@
     @apply bg-background text-foreground;
     /* Hard guarantee: the page itself never scrolls horizontally. Wide
        content (tables, network graphs, nav pills) must scroll inside its
-       own overflow-x-auto container instead. */
-    overflow-x: hidden;
+       own overflow-x-auto container instead.
+       `clip`, not `hidden` — per the CSS Overflow spec, giving either axis
+       a non-'visible' value forces the OTHER axis to compute as 'auto' too
+       ("hidden" on x turns y into an implicit scroll container). That made
+       both html and body scroll containers; since body's own box never
+       actually overflows (html does), the sidebar's `position: sticky`
+       resolved to body's dead scroll range and never stuck. `clip` doesn't
+       trigger that pairing, so html stays the sole real scroll container. */
+    overflow-x: clip;
     max-width: 100%;
   }
   html {

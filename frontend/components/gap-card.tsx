@@ -16,7 +16,9 @@ export function GapCard({ gap, index }: { gap: Gap; index: number }) {
       <p className="mt-2 pl-9 text-sm text-muted-foreground">{gap.evidence}</p>
       {gap.supporting_record_ids.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5 pl-9">
-          {gap.supporting_record_ids.map((id) => (
+          {/* The gap-analysis LLM occasionally lists the same record id twice
+              for one gap — dedupe so it's not shown (and keyed) twice. */}
+          {[...new Set(gap.supporting_record_ids)].map((id) => (
             <span
               key={id}
               className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground"

@@ -21,7 +21,9 @@ import { ClusterCard } from "@/components/cluster-card";
 import { RecommendationCard } from "@/components/recommendation-card";
 import { NotRunPlaceholder } from "@/components/not-run-placeholder";
 import { NetworkGraph } from "@/components/network-graph";
+import { WordCloud } from "@/components/word-cloud";
 import { ChatDrawer } from "@/components/chat-drawer";
+import { DashboardTour, type TourStep } from "@/components/onboarding/dashboard-tour";
 import { McpLogLine } from "@/components/mcp-log-line";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +43,7 @@ import { ClusterScatterChart } from "@/components/charts/cluster-scatter-chart";
 import { generateScatterPoints } from "@/lib/mock/clusters";
 import { CLUSTER_THEMES as SCIENCE_MAPPING_CLUSTER_LABELS } from "@/lib/mock/network";
 import { MOCK_CHAT_PAIRS } from "@/lib/mock/chat";
+import { assignClustersByComponent } from "@/lib/graph-cluster";
 import { api } from "@/lib/api";
 import type {
   AgentEvent,
@@ -63,6 +66,53 @@ const SECTIONS = [
   { id: "report", label: "Report" },
   { id: "activity-log", label: "Activity Log" },
 ] as const;
+
+const TOUR_STEPS: TourStep[] = [
+  {
+    id: "overview",
+    title: "Overview",
+    description: "Corpus stats and the Coordinator's executive summary, at a glance.",
+  },
+  {
+    id: "trends",
+    title: "Publication trends",
+    description:
+      "Publications and citations per year, plus top authors and journals — shown only if the Bibliometric Analyst was activated for your goal.",
+  },
+  {
+    id: "science-mapping",
+    title: "Science mapping",
+    description:
+      "Interactive keyword co-occurrence and co-citation networks. Drag nodes, scroll to zoom, and hover for detail.",
+  },
+  {
+    id: "clusters",
+    title: "Semantic clusters",
+    description:
+      "GMM clusters over sentence embeddings, plus a keyword-frequency word cloud, if Text Mining ran.",
+  },
+  {
+    id: "gaps",
+    title: "Research gaps",
+    description:
+      "Gaps the Insights & Reporting agent identified, each backed by evidence and a confidence rating.",
+  },
+  {
+    id: "recommendations",
+    title: "Recommendations",
+    description: "Future research topics the Research Advisor mapped 1:1 to each gap.",
+  },
+  {
+    id: "report",
+    title: "Report",
+    description: "Download the full PDF — goal, findings, gaps, and recommendations in one document.",
+  },
+  {
+    id: "activity-log",
+    title: "Activity log",
+    description: "Every agent transition and MCP tool call made during this run, for full transparency.",
+  },
+];
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -123,6 +173,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         sessionName={session.name}
         onSessionNameChange={handleRename}
         status={session.status}
+        right={<DashboardTour steps={TOUR_STEPS} />}
       />
       <SectionNav
         items={SECTIONS.map((s) => ({
@@ -278,16 +329,30 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                   {scienceMapping.cocitation_analysis.note ? (
                     <NotRunPlaceholder reason={scienceMapping.cocitation_analysis.note} />
                   ) : (
-                    <NetworkGraph
-                      mode={mode}
-                      nodes={scienceMapping.cocitation_analysis.nodes.map((n) => ({
-                        id: n.id,
-                        label: n.title,
-                        value: n.times_cited || 1,
-                        cluster: 0,
-                      }))}
-                      links={scienceMapping.cocitation_analysis.edges}
-                    />
+                    (() => {
+                      const cocitation = scienceMapping.cocitation_analysis;
+                      // Co-citation has no semantic cluster labels from the
+                      // MCP tool (unlike co-occurrence) — cluster it from the
+                      // network's own structure, same as VOSviewer does.
+                      const clusterByNode = assignClustersByComponent(cocitation.nodes, cocitation.edges);
+                      const clusterCount = new Set(clusterByNode.values()).size;
+                      return (
+                        <NetworkGraph
+                          mode={mode}
+                          clusterLabels={Array.from(
+                            { length: clusterCount },
+                            (_, i) => `Cluster ${i + 1}`
+                          )}
+                          nodes={cocitation.nodes.map((n) => ({
+                            id: n.id,
+                            label: n.title,
+                            value: n.times_cited || 1,
+                            cluster: clusterByNode.get(n.id) ?? 0,
+                          }))}
+                          links={cocitation.edges}
+                        />
+                      );
+                    })()
                   )}
                 </div>
               )}
@@ -306,6 +371,12 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             />
           ) : (
             <div className="space-y-6">
+              <div>
+                <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Keyword frequency
+                </h3>
+                <WordCloud clusters={textMining.clusters} mode={mode} />
+              </div>
               <div className="rounded-lg border bg-card p-4">
                 <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Embedding space (2D projection)
