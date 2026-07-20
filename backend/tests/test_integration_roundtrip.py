@@ -171,9 +171,12 @@ def test_single_specialist_round_trip(client, monkeypatch):
     async def fake_answer_question(session, results, question, answer_fn=None):
         return f"Grounded answer to: {question}"
 
-    import app.routers.chat as chat_router
+    # The chat route imports answer_question lazily (inside the handler, not
+    # at module load) to keep server startup fast, so patch it at its source
+    # rather than on app.routers.chat, which no longer holds that name.
+    import app.services.chat as chat_service
 
-    monkeypatch.setattr(chat_router, "answer_question", fake_answer_question)
+    monkeypatch.setattr(chat_service, "answer_question", fake_answer_question)
 
     chat_response = client.post(f"/sessions/{session_id}/chat", json={"question": "How many gaps?"})
     assert chat_response.status_code == 200

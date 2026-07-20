@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session as DBSession
 from app.db import get_db
 from app.models import AnalysisResult, AnalysisSession, ChatMessage
 from app.schemas import ChatMessageResponse, ChatRequest, ChatResponse
-from app.services.chat import answer_question
 
 router = APIRouter(prefix="/sessions", tags=["chat"])
 
@@ -13,6 +12,10 @@ router = APIRouter(prefix="/sessions", tags=["chat"])
 async def post_chat_message(
     session_id: str, body: ChatRequest, db: DBSession = Depends(get_db)
 ) -> dict:
+    # Deferred — see the same note in app/routers/analysis.py. langchain_openai
+    # alone is ~1.5s of import time we don't want paid at server boot.
+    from app.services.chat import answer_question
+
     session = db.get(AnalysisSession, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
