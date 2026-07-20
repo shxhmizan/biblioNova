@@ -357,7 +357,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               </p>
             </div>
             {reportUrl ? (
-              <Button render={<a href={reportUrl} download />}>
+              <Button nativeButton={false} render={<a href={reportUrl} download />}>
                 <Download className="size-4" />
                 Download
               </Button>

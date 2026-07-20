@@ -13,7 +13,10 @@ class RoutingDecision(BaseModel):
 
     activated: list[str] = Field(default_factory=list)
     skipped: list[SpecialistSkip] = Field(default_factory=list)
-    justification: str
+    # Defaults to "" rather than being required: when clarification_needed=True the
+    # model sometimes omits this field entirely (it has nothing to justify routing-
+    # wise), and a missing field must never crash the pipeline at this boundary.
+    justification: str = ""
     clarification_needed: bool = False
     clarification_message: str | None = None
 

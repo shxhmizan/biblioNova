@@ -12,6 +12,7 @@ from string import Template
 from langchain_openai import ChatOpenAI
 
 from agents.events import EventSink, noop_sink
+from agents.llm_retry import invoke_with_retry
 from agents.prompts_loader import load_prompt
 from agents.schemas import RoutingDecision
 from agents.state import GraphState
@@ -19,16 +20,12 @@ from app.config import settings
 
 SPECIALIST_DESCRIPTIONS: dict[str, str] = {
     "bibliometric_analyst": (
-        "Bibliometric Analyst — publication trends over time, citation analysis, "
-        "author/journal rankings."
+        "publication trends over time, citation analysis, author/journal rankings."
     ),
     "science_mapping": (
-        "Science Mapping — keyword co-occurrence and co-citation networks revealing "
-        "thematic structure."
+        "keyword co-occurrence and co-citation networks revealing thematic structure."
     ),
-    "text_mining": (
-        "Text Mining — semantic clustering of titles/abstracts into auto-labeled themes."
-    ),
+    "text_mining": "semantic clustering of titles/abstracts into auto-labeled themes.",
 }
 
 DecisionFn = Callable[[str, dict, list[str]], Awaitable[RoutingDecision]]
@@ -40,20 +37,26 @@ def build_routing_llm() -> ChatOpenAI:
         api_key=settings.openrouter_api_key,
         base_url=settings.openrouter_base_url,
         temperature=0,
+        max_tokens=2048,
     )
 
 
 async def _llm_decide_routing(
     goal: str, corpus_stats: dict, available_specialists: list[str]
 ) -> RoutingDecision:
-    specialist_list = "\n".join(f"- {SPECIALIST_DESCRIPTIONS[s]}" for s in available_specialists)
+    specialist_list = "\n".join(
+        f"- `{s}` — {SPECIALIST_DESCRIPTIONS[s]}" for s in available_specialists
+    )
     prompt = Template(load_prompt("coordinator_routing.v1.md")).safe_substitute(
         specialist_list=specialist_list,
         goal=goal,
         corpus_stats_json=json.dumps(corpus_stats, indent=2),
     )
-    llm = build_routing_llm().with_structured_output(RoutingDecision)
-    return await llm.ainvoke(prompt)
+    # method="json_schema" pinned explicitly: langchain's default method
+    # selection is unreliable for this model on structured schemas (observed
+    # falling back to free-text/markdown output for more complex schemas).
+    llm = build_routing_llm().with_structured_output(RoutingDecision, method="json_schema")
+    return await invoke_with_retry(lambda: llm.ainvoke(prompt))
 
 
 async def decide_routing(

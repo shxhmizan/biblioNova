@@ -11,6 +11,7 @@ from string import Template
 from langchain_openai import ChatOpenAI
 
 from agents.events import EventSink, noop_sink
+from agents.llm_retry import invoke_with_retry
 from agents.nodes.report_pdf import generate_report_pdf
 from agents.prompts_loader import load_prompt
 from agents.schemas import RecommendationSet
@@ -26,6 +27,7 @@ def build_advisor_llm() -> ChatOpenAI:
         api_key=settings.openrouter_api_key,
         base_url=settings.openrouter_base_url,
         temperature=0.3,
+        max_tokens=4096,
     )
 
 
@@ -33,8 +35,8 @@ async def _llm_recommend(goal: str, gaps: list[dict]) -> RecommendationSet:
     prompt = Template(load_prompt("research_advisor.v1.md")).safe_substitute(
         goal=goal, gaps_json=json.dumps(gaps, indent=2)
     )
-    llm = build_advisor_llm().with_structured_output(RecommendationSet)
-    return await llm.ainvoke(prompt)
+    llm = build_advisor_llm().with_structured_output(RecommendationSet, method="json_schema")
+    return await invoke_with_retry(lambda: llm.ainvoke(prompt))
 
 
 async def recommend(

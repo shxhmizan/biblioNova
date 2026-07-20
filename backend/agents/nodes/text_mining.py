@@ -26,6 +26,7 @@ def build_summary_llm() -> ChatOpenAI:
         api_key=settings.openrouter_api_key,
         base_url=settings.openrouter_base_url,
         temperature=0.2,
+        max_tokens=1024,
     )
 
 
