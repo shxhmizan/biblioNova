@@ -21,6 +21,7 @@ dependencies = [
     "scikit-learn>=1.9.0",
     "sentence-transformers>=5.6.0",
     "sqlalchemy>=2.0.51",
+    "torch>=2.0",
     "uvicorn[standard]>=0.51.0",
 ]
 
@@ -31,6 +32,19 @@ dev = [
     "pytest-asyncio>=1.4.0",
     "ruff>=0.15.22",
 ]
+
+# torch (pulled in transitively by sentence-transformers) defaults to the
+# full CUDA build. Deploy hosts like Render have no GPU, and torch probing
+# for CUDA at import time on a GPU-less machine is slow enough to blow past
+# Render's port-bind timeout before uvicorn ever starts listening — pin to
+# the CPU-only wheels there. macOS is untouched: it has no CUDA build anyway.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
