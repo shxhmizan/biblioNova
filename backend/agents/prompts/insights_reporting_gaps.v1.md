@@ -12,5 +12,6 @@ Instructions:
 - Write an executive_summary (4-6 sentences) synthesizing the overall analysis: what specialists ran, headline findings, and the gaps identified — written for someone who hasn't seen the raw data.
 - Do not invent counts, IDs, or findings not present in the data above.
 - Double-check before answering: does `gaps` actually contain 3 to 5 items? A missing or empty `gaps` list is wrong — go back and populate it from the data above.
+- Never use a double-quote character inside any string value (titles, evidence, executive_summary) — it breaks JSON syntax. Use single quotes or rephrase instead.
 
 Respond with raw JSON matching the requested schema only — no markdown formatting, no headers, no code fences.
