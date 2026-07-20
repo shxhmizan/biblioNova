@@ -21,6 +21,9 @@ data/uploads/
 *.pdf
 !data/samples/*.pdf
 
+# Local Docker Compose overrides (e.g. port remaps for machine-specific conflicts)
+docker-compose.override.yml
+
 # OS / editor
 .DS_Store
 .vscode/
