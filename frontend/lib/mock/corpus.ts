@@ -36,6 +36,8 @@ export const MOCK_ROUTING_DECISION: RoutingDecision = {
   ],
   justification:
     "The goal centers on publication trends over time and how the field's thematic structure has evolved, which Bibliometric Analyst and Science Mapping directly address. Text Mining's semantic clustering isn't required since the goal doesn't ask for latent theme discovery beyond known thematic structure.",
+  clarification_needed: false,
+  clarification_message: null,
 };
 
 export const MOCK_EXECUTIVE_SUMMARY =

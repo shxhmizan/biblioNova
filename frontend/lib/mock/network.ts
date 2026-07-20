@@ -72,8 +72,7 @@ CLUSTER_KEYWORDS.forEach((keywords, clusterIdx) => {
 });
 
 const edges: GraphEdge[] = [];
-const clusterNodeIds = CLUSTER_KEYWORDS.map((kws) => kws);
-clusterNodeIds.forEach((keywords, clusterIdx) => {
+CLUSTER_KEYWORDS.forEach((keywords) => {
   for (let i = 0; i < keywords.length; i++) {
     for (let j = i + 1; j < keywords.length; j++) {
       // Denser edges between higher-frequency (earlier) keywords in the cluster.

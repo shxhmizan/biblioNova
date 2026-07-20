@@ -4,7 +4,7 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-svh w-full">
-      <aside className="hidden md:flex md:w-60 md:flex-shrink-0 md:border-r md:border-sidebar-border">
+      <aside className="hidden md:sticky md:top-0 md:flex md:h-svh md:w-60 md:flex-shrink-0 md:border-r md:border-sidebar-border">
         <Sidebar className="w-60" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-14 md:pb-0">

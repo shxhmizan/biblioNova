@@ -12,7 +12,7 @@ export const MOCK_CHAT_PAIRS: MockChatPair[] = [
   {
     question: "Summarize gap #2.",
     answer:
-      "Gap 2 is that evaluation methodology lags capability development in high-stakes domains: the 'Evaluation, Safety & Trust' cluster grew far more slowly than 'LLM Agent Planning & Tool Use' since 2022, and only 7 of 198 evaluation papers target healthcare specifically. Confidence: high.",
+      "gap-2 is that evaluation methodology lags capability development in high-stakes domains: the 'Evaluation, Safety & Trust' cluster grew far more slowly than 'LLM Agent Planning & Tool Use' since 2022, and only 7 of 198 evaluation papers target healthcare specifically. Confidence: high.",
   },
   {
     question: "How many specialists were activated for this analysis?",
@@ -32,6 +32,6 @@ export const MOCK_CHAT_PAIRS: MockChatPair[] = [
   {
     question: "Which recommendation addresses gap 4?",
     answer:
-      "\"Rapid-cycle evaluation methods that track fast-moving agentic AI capability shifts\" — proposing continuous, rolling-window evaluation to keep pace with 2025–2026 publication velocity.",
+      "\"Rapid-cycle evaluation methods that track fast-moving agentic AI capability shifts\" addresses gap-4 — proposing continuous, rolling-window evaluation to keep pace with 2025–2026 publication velocity.",
   },
 ];

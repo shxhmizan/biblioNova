@@ -26,8 +26,15 @@ export function Topbar({
 }) {
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(sessionName ?? "");
+  const [syncedName, setSyncedName] = React.useState(sessionName);
 
-  React.useEffect(() => setDraft(sessionName ?? ""), [sessionName]);
+  // Reset the draft when sessionName changes externally (e.g. a fresh session
+  // loads) — adjusting state during render instead of an effect, per React's
+  // guidance for deriving state from a changed prop.
+  if (sessionName !== syncedName) {
+    setSyncedName(sessionName);
+    setDraft(sessionName ?? "");
+  }
 
   function commit() {
     setEditing(false);

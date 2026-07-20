@@ -71,6 +71,7 @@ export interface RoutingDecision {
 
 export interface SessionSummary {
   id: string;
+  name: string;
   filename: string;
   goal: string;
   status: SessionStatusValue;
@@ -80,6 +81,7 @@ export interface SessionSummary {
 
 export interface SessionDetail {
   id: string;
+  name: string;
   filename: string;
   goal: string;
   status: SessionStatusValue;
@@ -89,6 +91,16 @@ export interface SessionDetail {
   error_message: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface SessionListItem {
+  id: string;
+  name: string;
+  filename: string;
+  goal: string;
+  status: SessionStatusValue;
+  routing_decision: RoutingDecision | null;
+  created_at: string;
 }
 
 export type AgentEventType =

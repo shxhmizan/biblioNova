@@ -1,0 +1,675 @@
+% BiblioAgent sample corpus — synthetic, WoS-export-style BibTeX fixture
+% 46 well-formed records (agentic AI / LLM research, 2015-2026) plus 4
+% deliberately malformed records to exercise bibtex-parser-server's
+% skip-and-log behavior. Includes synthetic abstracts and an optional
+% cited-references field (not part of standard WoS BibTeX exports) so
+% Science Mapping's co-citation analysis has real data to demo.
+% Used by the Phase 1/2 integration tests.
+
+@article{nguyen2026,
+  author = {Duplicate, D.},
+  title = {Accidentally Re-Exported Duplicate Record},
+  journal = {Applied Sciences},
+  year = {2023},
+  note = {Times Cited: 0}
+}
+
+@article{tan2020,
+  author = {Tan, W. K. and Patel, R. and Ibrahim, N. and Ahmed, Z.},
+  title = {Co-Citation Network Analysis of Manufacturing Machine Learning Research},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2020},
+  volume = {33},
+  number = {3},
+  pages = {277--572},
+  doi = {10.1234/biblioagent.2020.1010},
+  keywords = {agentic AI, large language models, manufacturing, co-citation analysis, science mapping},
+  abstract = {A co-citation network analysis of manufacturing machine learning research identifies influential clusters of frequently co-cited publications.},
+  cited-references = {ahmed2022; kim2024},
+  note = {Times Cited: 25}
+}
+
+@inproceedings{wang2021,
+  author = {Wang, X. and Okonkwo, C. and O'Brien, C. and Silva, M. F.},
+  title = {Comparative Evaluation of Self-Improving Agent Frameworks for Customer Service Tasks},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year = {2021},
+  pages = {218--413},
+  doi = {10.1234/biblioagent.2021.1038},
+  keywords = {agentic AI, large language models, customer service, agentic ai, benchmarking},
+  abstract = {We compare several self-improving agent frameworks on a battery of customer service tasks, reporting accuracy, latency, and tool-call efficiency.},
+  note = {Times Cited: 19}
+}
+
+@article{chen2026,
+  author = {Chen, L.},
+  title = {Model Context Protocol: Standardizing Tool Use for Agentic Agents},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2026},
+  volume = {39},
+  number = {3},
+  pages = {26--434},
+  doi = {10.1234/biblioagent.2026.1045},
+  keywords = {agentic AI, large language models, manufacturing, model context protocol, tool use},
+  abstract = {We describe how the Model Context Protocol standardizes tool discovery and invocation for agentic agents, removing the need for hardcoded tool bindings.},
+  note = {Times Cited: 0}
+}
+
+@article{rossi2020,
+  author = {Rossi, G. and Nguyen, T. D.},
+  title = {Tool-Augmented Large Language Models for Software Engineering Reasoning},
+  journal = {Nature Machine Intelligence},
+  year = {2020},
+  volume = {13},
+  number = {4},
+  pages = {216--500},
+  doi = {10.1234/biblioagent.2020.1042},
+  keywords = {agentic AI, large language models, software engineering, tool use, large language models},
+  abstract = {We study how equipping large language models with external tools improves multi-step reasoning accuracy on software engineering tasks.},
+  note = {Times Cited: 38}
+}
+
+@article{patel2024,
+  author = {Patel, R. and Yamamoto, H. and Dubois, C. and Chen, L.},
+  title = {Gaussian Mixture Models for Topic Discovery in Software Engineering Corpora},
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  year = {2024},
+  volume = {58},
+  number = {4},
+  pages = {159--416},
+  doi = {10.1234/biblioagent.2024.1036},
+  keywords = {agentic AI, large language models, software engineering, semantic clustering, topic discovery},
+  abstract = {Gaussian Mixture Models applied to embedding representations of software engineering corpora discover coherent, auto-labeled topic clusters.},
+  note = {Times Cited: 3}
+}
+
+@article{nguyen2023a,
+  author = {Nguyen, T. D. and Dubois, C. and Hassan, A. M.},
+  title = {Model Context Protocol: Standardizing Tool Use for Goal-Directed Agents},
+  journal = {ACM Computing Surveys},
+  year = {2023},
+  volume = {41},
+  number = {5},
+  pages = {27--348},
+  doi = {10.1234/biblioagent.2023.1025},
+  keywords = {agentic AI, large language models, software engineering, model context protocol, tool use},
+  abstract = {We describe how the Model Context Protocol standardizes tool discovery and invocation for goal-directed agents, removing the need for hardcoded tool bindings.},
+  note = {Times Cited: 43}
+}
+
+@inproceedings{wang2023,
+  author = {Wang, X. and Tan, W. K. and Okonkwo, C. and Garcia, R.},
+  title = {Evaluating LLM-Based Agents on Long-Horizon Software Engineering Planning Tasks},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year = {2023},
+  pages = {66--574},
+  doi = {10.1234/biblioagent.2023.1044},
+  keywords = {agentic AI, large language models, software engineering, long-horizon planning, large language models},
+  abstract = {We benchmark LLM-based agents on long-horizon software engineering planning tasks and analyze failure modes in sub-goal decomposition.},
+  note = {Times Cited: 0}
+}
+
+@article{novak2025,
+  author = {Novak, T. and Patel, R. and Ahmed, Z. and Park, J. H.},
+  title = {Autonomous Goal-Directed Agents for Scientific Discovery Decision Support},
+  journal = {IEEE Access},
+  year = {2025},
+  volume = {40},
+  number = {8},
+  pages = {133--427},
+  doi = {10.1234/biblioagent.2025.1040},
+  keywords = {agentic AI, large language models, scientific discovery, autonomous agents, decision support},
+  abstract = {We propose an autonomous agent framework that supports scientific discovery decision-making by decomposing goals into sub-tasks and delegating them to specialist components.},
+  note = {Times Cited: 13}
+}
+
+@article{obrien2015a,
+  author = {O'Brien, C.},
+  title = {Trust and Transparency in Collaborative AI Decision-Making Systems},
+  journal = {Knowledge-Based Systems},
+  year = {2015},
+  volume = {59},
+  number = {2},
+  pages = {234--513},
+  doi = {10.1234/biblioagent.2015.1037},
+  keywords = {agentic AI, large language models, financial services, explainable ai, trust},
+  abstract = {We study how transparency mechanisms affect user trust in collaborative AI systems used for financial services decision-making.},
+  note = {Times Cited: 65}
+}
+
+@article{tan2025,
+  author = {Tan, W. K. and Kumar, P. and Müller, F. and Zhao, Y.},
+  title = {Human-in-the-Loop Oversight for Agentic Autonomous Agents},
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  year = {2025},
+  volume = {15},
+  number = {12},
+  pages = {249--336},
+  doi = {10.1234/biblioagent.2025.1011},
+  keywords = {agentic AI, large language models, customer service, human-in-the-loop, autonomous agents},
+  abstract = {We examine human-in-the-loop oversight mechanisms for agentic autonomous agents operating in high-stakes customer service settings.},
+  cited-references = {dubois2025},
+  note = {Times Cited: 0}
+}
+
+@article{dubois2025,
+  author = {Dubois, C.},
+  title = {Semantic Clustering of Scientific Literature Using Sentence Embeddings},
+  journal = {Applied Sciences},
+  year = {2025},
+  volume = {44},
+  number = {5},
+  pages = {175--358},
+  doi = {10.1234/biblioagent.2025.1009},
+  keywords = {agentic AI, large language models, legal, semantic clustering, sentence embeddings},
+  abstract = {We cluster scientific abstracts using sentence embeddings and Gaussian Mixture Models, producing auto-labeled thematic groups for large corpora.},
+  note = {Times Cited: 6}
+}
+
+@article{dubois2021,
+  author = {Dubois, C. and Larsson, E. and Garcia, R. and Tan, W. K.},
+  title = {Human-in-the-Loop Oversight for Adaptive Autonomous Agents},
+  journal = {Information Processing \& Management},
+  year = {2021},
+  volume = {12},
+  number = {2},
+  pages = {223--477},
+  doi = {10.1234/biblioagent.2021.1031},
+  keywords = {agentic AI, large language models, scientific discovery, human-in-the-loop, autonomous agents},
+  abstract = {We examine human-in-the-loop oversight mechanisms for adaptive autonomous agents operating in high-stakes scientific discovery settings.},
+  cited-references = {okonkwo2020; yamamoto2020},
+  note = {Times Cited: 45}
+}
+
+@article{larsson2022,
+  author = {Larsson, E.},
+  title = {A Taxonomy of Tool-Calling Behaviors in Collaborative Language Model Agents},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2022},
+  volume = {39},
+  number = {11},
+  pages = {272--587},
+  doi = {10.1234/biblioagent.2022.1039},
+  keywords = {agentic AI, large language models, climate science, tool use, large language models},
+  abstract = {We propose a taxonomy of tool-calling behaviors observed in collaborative language model agents and relate them to task success rates.},
+  cited-references = {park2024},
+  note = {Times Cited: 14}
+}
+
+@inproceedings{larsson2019,
+  author = {Larsson, E. and Yamamoto, H. and Ibrahim, N. and Ahmed, Z.},
+  title = {Prompt Engineering Strategies for Goal-Directed Task Decomposition},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics},
+  year = {2019},
+  pages = {205--492},
+  doi = {10.1234/biblioagent.2019.1012},
+  keywords = {agentic AI, large language models, financial services, prompt engineering, task decomposition},
+  abstract = {We evaluate prompt engineering strategies that improve goal-directed task decomposition quality in language model agents.},
+  cited-references = {tan2025},
+  note = {Times Cited: 38}
+}
+
+@article{ahmed2022,
+  author = {Ahmed, Z. and Wang, X.},
+  title = {A Systematic Review of Agentic AI Applications in Scientific Discovery},
+  journal = {Knowledge-Based Systems},
+  year = {2022},
+  volume = {14},
+  number = {7},
+  pages = {196--540},
+  doi = {10.1234/biblioagent.2022.1008},
+  keywords = {agentic AI, large language models, scientific discovery, agentic ai, systematic review},
+  abstract = {This systematic review synthesizes agentic AI applications reported in scientific discovery, highlighting adoption barriers and evaluation gaps.},
+  cited-references = {nguyen2023},
+  note = {Times Cited: 19}
+}
+
+@article{dubois2020,
+  author = {Dubois, C. and Kumar, P. and Patel, R.},
+  title = {Knowledge Graph-Grounded Agents for Scientific Discovery Applications},
+  journal = {ACM Computing Surveys},
+  year = {2020},
+  volume = {29},
+  number = {11},
+  pages = {210--468},
+  doi = {10.1234/biblioagent.2020.1033},
+  keywords = {agentic AI, large language models, scientific discovery, knowledge graphs, tool use},
+  abstract = {Grounding agent reasoning in a knowledge graph improves factual consistency for scientific discovery applications, as shown across three benchmark tasks.},
+  note = {Times Cited: 18}
+}
+
+@article{kumar2025,
+  author = {Kumar, P.},
+  title = {Bibliometric Analysis of Research Trends in Manufacturing Artificial Intelligence},
+  journal = {Journal of Artificial Intelligence Research},
+  year = {2025},
+  volume = {33},
+  number = {10},
+  pages = {283--376},
+  doi = {10.1234/biblioagent.2025.1027},
+  keywords = {agentic AI, large language models, manufacturing, bibliometric analysis, publication trends},
+  abstract = {A bibliometric analysis of manufacturing artificial intelligence literature reveals publication trends, leading authors, and citation patterns over the past decade.},
+  cited-references = {chen2021},
+  note = {Times Cited: 10}
+}
+
+@inproceedings{yamamoto2020,
+  author = {Yamamoto, H.},
+  title = {Comparative Evaluation of Distributed Agent Frameworks for Software Engineering Tasks},
+  booktitle = {Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  year = {2020},
+  pages = {250--380},
+  doi = {10.1234/biblioagent.2020.1018},
+  keywords = {agentic AI, large language models, software engineering, agentic ai, benchmarking},
+  abstract = {We compare several distributed agent frameworks on a battery of software engineering tasks, reporting accuracy, latency, and tool-call efficiency.},
+  cited-references = {dubois2025; obrien2022},
+  note = {Times Cited: 0}
+}
+
+@inproceedings{nguyen2024,
+  author = {Nguyen, T. D. and Park, J. H. and Kim, S. Y.},
+  title = {Scalable Orchestration of Specialist Agents in Healthcare Pipelines},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics},
+  year = {2024},
+  pages = {239--527},
+  doi = {10.1234/biblioagent.2024.1035},
+  keywords = {agentic AI, large language models, healthcare, multi-agent systems, orchestration},
+  abstract = {We present a scalable orchestration layer for coordinating specialist agents in healthcare analysis pipelines with selective activation.},
+  note = {Times Cited: 0}
+}
+
+@inproceedings{nguyen2026,
+  author = {Nguyen, T. D. and Kumar, P. and Dubois, C. and Park, J. H.},
+  title = {Scalable Orchestration of Specialist Agents in Public Health Pipelines},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year = {2026},
+  pages = {51--332},
+  doi = {10.1234/biblioagent.2026.1015},
+  keywords = {agentic AI, large language models, public health, multi-agent systems, orchestration},
+  abstract = {We present a scalable orchestration layer for coordinating specialist agents in public health analysis pipelines with selective activation.},
+  cited-references = {silva2019; obrien2022},
+  note = {Times Cited: 0}
+}
+
+@article{chen2019,
+  author = {Chen, L. and O'Brien, C. and Müller, F.},
+  title = {Retrieval-Augmented Generation for Legal Question Answering},
+  journal = {Information Processing \& Management},
+  year = {2019},
+  volume = {49},
+  number = {11},
+  pages = {271--305},
+  doi = {10.1234/biblioagent.2019.1023},
+  keywords = {agentic AI, large language models, legal, retrieval-augmented generation, question answering},
+  abstract = {A retrieval-augmented generation pipeline is evaluated on legal question answering, showing improved factual grounding over parametric-only baselines.},
+  cited-references = {chen2021; ferreira2022},
+  note = {Times Cited: 27}
+}
+
+@article{müller2016,
+  author = {Müller, F. and Rahman, S. A. and Nguyen, T. D.},
+  title = {A Systematic Review of Agentic AI Applications in Financial Services},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2016},
+  volume = {25},
+  number = {3},
+  pages = {91--512},
+  doi = {10.1234/biblioagent.2016.1028},
+  keywords = {agentic AI, large language models, financial services, agentic ai, systematic review},
+  abstract = {This systematic review synthesizes agentic AI applications reported in financial services, highlighting adoption barriers and evaluation gaps.},
+  cited-references = {kim2021; chen2019},
+  note = {Times Cited: 30}
+}
+
+@inproceedings{okonkwo2021,
+  author = {Okonkwo, C.},
+  title = {Prompt Engineering Strategies for Self-Improving Task Decomposition},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics},
+  year = {2021},
+  pages = {221--336},
+  doi = {10.1234/biblioagent.2021.1032},
+  keywords = {agentic AI, large language models, scientific discovery, prompt engineering, task decomposition},
+  abstract = {We evaluate prompt engineering strategies that improve self-improving task decomposition quality in language model agents.},
+  cited-references = {obrien2015; larsson2019},
+  note = {Times Cited: 27}
+}
+
+@article{kim2021,
+  author = {Kim, S. Y.},
+  title = {A Taxonomy of Tool-Calling Behaviors in Collaborative Language Model Agents},
+  journal = {Journal of Artificial Intelligence Research},
+  year = {2021},
+  volume = {57},
+  number = {6},
+  pages = {30--326},
+  doi = {10.1234/biblioagent.2021.1019},
+  keywords = {agentic AI, large language models, legal, tool use, large language models},
+  abstract = {We propose a taxonomy of tool-calling behaviors observed in collaborative language model agents and relate them to task success rates.},
+  note = {Times Cited: 50}
+}
+
+@article{missingyear2022,
+  author = {Halim, R.},
+  title = {Incomplete Metadata From a Faulty WoS Export},
+  journal = {Journal of Artificial Intelligence Research},
+  note = {Times Cited: 3}
+}
+
+@article{hassan2025,
+  author = {Hassan, A. M. and O'Brien, C. and Ibrahim, N. and Ferreira, A.},
+  title = {A Survey of Self-Improving Multi-Agent Systems in Legal},
+  journal = {Journal of Machine Learning Research},
+  year = {2025},
+  volume = {30},
+  number = {9},
+  pages = {42--371},
+  doi = {10.1234/biblioagent.2025.1041},
+  keywords = {agentic AI, large language models, legal, multi-agent systems, survey},
+  abstract = {This survey reviews self-improving multi-agent system architectures applied to legal, comparing coordination strategies and identifying open research challenges.},
+  cited-references = {nguyen2026; chen2021},
+  note = {Times Cited: 0}
+}
+
+@inproceedings{nguyen2023,
+  author = {Nguyen, T. D.},
+  title = {Adaptive Coordination Strategies in Multi-Agent Reinforcement Learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year = {2023},
+  pages = {256--503},
+  doi = {10.1234/biblioagent.2023.1006},
+  keywords = {agentic AI, large language models, manufacturing, multi-agent systems, reinforcement learning},
+  abstract = {We compare adaptive coordination strategies for multi-agent reinforcement learning in cooperative and competitive settings.},
+  note = {Times Cited: 28}
+}
+
+@article{silva2019,
+  author = {Silva, M. F. and O'Brien, C. and Patel, R.},
+  title = {Bibliometric Analysis of Research Trends in Public Health Artificial Intelligence},
+  journal = {Information Processing \& Management},
+  year = {2019},
+  volume = {57},
+  number = {10},
+  pages = {220--599},
+  doi = {10.1234/biblioagent.2019.1007},
+  keywords = {agentic AI, large language models, public health, bibliometric analysis, publication trends},
+  abstract = {A bibliometric analysis of public health artificial intelligence literature reveals publication trends, leading authors, and citation patterns over the past decade.},
+  note = {Times Cited: 17}
+}
+
+@article{obrien2015,
+  author = {O'Brien, C. and Silva, M. F. and Patel, R.},
+  title = {Autonomous Self-Improving Agents for Education Decision Support},
+  journal = {ACM Computing Surveys},
+  year = {2015},
+  volume = {15},
+  number = {10},
+  pages = {217--317},
+  doi = {10.1234/biblioagent.2015.1000},
+  keywords = {agentic AI, large language models, education, autonomous agents, decision support},
+  abstract = {We propose an autonomous agent framework that supports education decision-making by decomposing goals into sub-tasks and delegating them to specialist components.},
+  note = {Times Cited: 63}
+}
+
+@article{wang2025,
+  author = {Wang, X. and Tan, W. K. and Müller, F. and Zhao, Y.},
+  title = {Retrieval-Augmented Generation for Healthcare Question Answering},
+  journal = {Decision Support Systems},
+  year = {2025},
+  volume = {36},
+  number = {9},
+  pages = {280--413},
+  doi = {10.1234/biblioagent.2025.1043},
+  keywords = {agentic AI, large language models, healthcare, retrieval-augmented generation, question answering},
+  abstract = {A retrieval-augmented generation pipeline is evaluated on healthcare question answering, showing improved factual grounding over parametric-only baselines.},
+  note = {Times Cited: 10}
+}
+
+@article{silva2025,
+  author = {Silva, M. F. and Nguyen, T. D. and Andersen, K.},
+  title = {Tool-Augmented Large Language Models for Manufacturing Reasoning},
+  journal = {IEEE Access},
+  year = {2025},
+  volume = {39},
+  number = {9},
+  pages = {64--494},
+  doi = {10.1234/biblioagent.2025.1002},
+  keywords = {agentic AI, large language models, manufacturing, tool use, large language models},
+  abstract = {We study how equipping large language models with external tools improves multi-step reasoning accuracy on manufacturing tasks.},
+  cited-references = {ahmed2021; obrien2015},
+  note = {Times Cited: 0}
+}
+
+@inproceedings{müller2020,
+  author = {Müller, F. and Nguyen, T. D. and Dubois, C.},
+  title = {Evaluating LLM-Based Agents on Long-Horizon Scientific Discovery Planning Tasks},
+  booktitle = {Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  year = {2020},
+  pages = {88--574},
+  doi = {10.1234/biblioagent.2020.1004},
+  keywords = {agentic AI, large language models, scientific discovery, long-horizon planning, large language models},
+  abstract = {We benchmark LLM-based agents on long-horizon scientific discovery planning tasks and analyze failure modes in sub-goal decomposition.},
+  note = {Times Cited: 20}
+}
+
+@article{rahman2022,
+  author = {Rahman, S. A.},
+  title = {Explainable AI Approaches for Healthcare Diagnostic Support},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2022},
+  volume = {56},
+  number = {10},
+  pages = {296--543},
+  doi = {10.1234/biblioagent.2022.1014},
+  keywords = {agentic AI, large language models, healthcare, explainable ai, decision support},
+  abstract = {We survey explainable AI approaches designed to support healthcare diagnostic decisions, emphasizing interpretability-accuracy trade-offs.},
+  cited-references = {kim2024; ahmed2022},
+  note = {Times Cited: 19}
+}
+
+@article{ferreira2022,
+  author = {Ferreira, A. and Garcia, R. and Andersen, K.},
+  title = {Tool-Augmented Large Language Models for Financial Services Reasoning},
+  journal = {Knowledge-Based Systems},
+  year = {2022},
+  volume = {16},
+  number = {2},
+  pages = {276--410},
+  doi = {10.1234/biblioagent.2022.1022},
+  keywords = {agentic AI, large language models, financial services, tool use, large language models},
+  abstract = {We study how equipping large language models with external tools improves multi-step reasoning accuracy on financial services tasks.},
+  note = {Times Cited: 17}
+}
+
+@article{kim2024,
+  author = {Kim, S. Y. and Nguyen, T. D. and Rossi, G.},
+  title = {Retrieval-Augmented Generation for Climate Science Question Answering},
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  year = {2024},
+  volume = {24},
+  number = {2},
+  pages = {195--443},
+  doi = {10.1234/biblioagent.2024.1003},
+  keywords = {agentic AI, large language models, climate science, retrieval-augmented generation, question answering},
+  abstract = {A retrieval-augmented generation pipeline is evaluated on climate science question answering, showing improved factual grounding over parametric-only baselines.},
+  cited-references = {ahmed2021},
+  note = {Times Cited: 13}
+}
+
+@article{nguyen2025,
+  author = {Nguyen, T. D. and Park, J. H.},
+  title = {Explainable AI Approaches for Legal Diagnostic Support},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  year = {2025},
+  volume = {49},
+  number = {10},
+  pages = {155--508},
+  doi = {10.1234/biblioagent.2025.1034},
+  keywords = {agentic AI, large language models, legal, explainable ai, decision support},
+  abstract = {We survey explainable AI approaches designed to support legal diagnostic decisions, emphasizing interpretability-accuracy trade-offs.},
+  note = {Times Cited: 0}
+}
+
+@article{ahmed2021,
+  author = {Ahmed, Z. and Novak, T.},
+  title = {A Survey of Agentic Multi-Agent Systems in Education},
+  journal = {Expert Systems with Applications},
+  year = {2021},
+  volume = {38},
+  number = {10},
+  pages = {143--304},
+  doi = {10.1234/biblioagent.2021.1001},
+  keywords = {agentic AI, large language models, education, multi-agent systems, survey},
+  abstract = {This survey reviews agentic multi-agent system architectures applied to education, comparing coordination strategies and identifying open research challenges.},
+  cited-references = {obrien2015},
+  note = {Times Cited: 34}
+}
+
+@article{ferreira2022a,
+  author = {Ferreira, A. and Müller, F.},
+  title = {Co-Citation Network Analysis of Public Health Machine Learning Research},
+  journal = {Expert Systems with Applications},
+  year = {2022},
+  volume = {35},
+  number = {6},
+  pages = {143--336},
+  doi = {10.1234/biblioagent.2022.1030},
+  keywords = {agentic AI, large language models, public health, co-citation analysis, science mapping},
+  abstract = {A co-citation network analysis of public health machine learning research identifies influential clusters of frequently co-cited publications.},
+  cited-references = {novak2020},
+  note = {Times Cited: 6}
+}
+
+@article{okonkwo2020,
+  author = {Okonkwo, C. and Ibrahim, N. and Hassan, A. M. and Rossi, G.},
+  title = {Model Context Protocol: Standardizing Tool Use for Self-Improving Agents},
+  journal = {Applied Sciences},
+  year = {2020},
+  volume = {30},
+  number = {1},
+  pages = {118--317},
+  doi = {10.1234/biblioagent.2020.1005},
+  keywords = {agentic AI, large language models, software engineering, model context protocol, tool use},
+  abstract = {We describe how the Model Context Protocol standardizes tool discovery and invocation for self-improving agents, removing the need for hardcoded tool bindings.},
+  note = {Times Cited: 59}
+}
+
+@article{obrien2026,
+  author = {O'Brien, C.},
+  title = {Gaussian Mixture Models for Topic Discovery in Scientific Discovery Corpora},
+  journal = {Artificial Intelligence Review},
+  year = {2026},
+  volume = {25},
+  number = {2},
+  pages = {227--582},
+  doi = {10.1234/biblioagent.2026.1016},
+  keywords = {agentic AI, large language models, scientific discovery, semantic clustering, topic discovery},
+  abstract = {Gaussian Mixture Models applied to embedding representations of scientific discovery corpora discover coherent, auto-labeled topic clusters.},
+  cited-references = {ahmed2022},
+  note = {Times Cited: 6}
+}
+
+@inproceedings{tan2023,
+  author = {Tan, W. K.},
+  title = {Self-Improving Coordination Strategies in Multi-Agent Reinforcement Learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year = {2023},
+  pages = {227--583},
+  doi = {10.1234/biblioagent.2023.1026},
+  keywords = {agentic AI, large language models, manufacturing, multi-agent systems, reinforcement learning},
+  abstract = {We compare self-improving coordination strategies for multi-agent reinforcement learning in cooperative and competitive settings.},
+  note = {Times Cited: 8}
+}
+
+@article{chen2021,
+  author = {Chen, L.},
+  title = {Trust and Transparency in Agentic AI Decision-Making Systems},
+  journal = {Decision Support Systems},
+  year = {2021},
+  volume = {25},
+  number = {3},
+  pages = {209--549},
+  doi = {10.1234/biblioagent.2021.1017},
+  keywords = {agentic AI, large language models, healthcare, explainable ai, trust},
+  abstract = {We study how transparency mechanisms affect user trust in agentic AI systems used for healthcare decision-making.},
+  note = {Times Cited: 37}
+}
+
+@article{badyearfield2020,
+  author = {Wrong, F.},
+  title = {Publication Year Recorded as Text Instead of Number},
+  journal = {Knowledge-Based Systems},
+  year = {in press},
+  note = {Times Cited: 1}
+}
+
+@article{novak2020,
+  author = {Novak, T.},
+  title = {A Survey of Collaborative Multi-Agent Systems in Customer Service},
+  journal = {Applied Sciences},
+  year = {2020},
+  volume = {55},
+  number = {6},
+  pages = {123--436},
+  doi = {10.1234/biblioagent.2020.1021},
+  keywords = {agentic AI, large language models, customer service, multi-agent systems, survey},
+  abstract = {This survey reviews collaborative multi-agent system architectures applied to customer service, comparing coordination strategies and identifying open research challenges.},
+  cited-references = {ahmed2022; nguyen2023},
+  note = {Times Cited: 28}
+}
+
+@article{brokensyntax2021 author = {Ong, T.} title = {Malformed BibTeX Syntax Test} journal = {IEEE Access} year = {2021}}
+
+@article{park2024,
+  author = {Park, J. H. and Dubois, C. and Patel, R.},
+  title = {Semantic Clustering of Scientific Literature Using Sentence Embeddings},
+  journal = {Information Processing \& Management},
+  year = {2024},
+  volume = {20},
+  number = {12},
+  pages = {56--496},
+  doi = {10.1234/biblioagent.2024.1029},
+  keywords = {agentic AI, large language models, financial services, semantic clustering, sentence embeddings},
+  abstract = {We cluster scientific abstracts using sentence embeddings and Gaussian Mixture Models, producing auto-labeled thematic groups for large corpora.},
+  note = {Times Cited: 0}
+}
+
+@article{obrien2022,
+  author = {O'Brien, C.},
+  title = {Knowledge Graph-Grounded Agents for Climate Science Applications},
+  journal = {ACM Computing Surveys},
+  year = {2022},
+  volume = {24},
+  number = {10},
+  pages = {113--304},
+  doi = {10.1234/biblioagent.2022.1013},
+  keywords = {agentic AI, large language models, climate science, knowledge graphs, tool use},
+  abstract = {Grounding agent reasoning in a knowledge graph improves factual consistency for climate science applications, as shown across three benchmark tasks.},
+  cited-references = {obrien2015; dubois2025},
+  note = {Times Cited: 4}
+}
+
+@article{rahman2024,
+  author = {Rahman, S. A. and Ahmed, Z.},
+  title = {Autonomous Goal-Directed Agents for Public Health Decision Support},
+  journal = {Applied Sciences},
+  year = {2024},
+  volume = {25},
+  number = {7},
+  pages = {62--592},
+  doi = {10.1234/biblioagent.2024.1020},
+  keywords = {agentic AI, large language models, public health, autonomous agents, decision support},
+  abstract = {We propose an autonomous agent framework that supports public health decision-making by decomposing goals into sub-tasks and delegating them to specialist components.},
+  note = {Times Cited: 16}
+}
+
+@inproceedings{silva2024,
+  author = {Silva, M. F.},
+  title = {Evaluating LLM-Based Agents on Long-Horizon Climate Science Planning Tasks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year = {2024},
+  pages = {140--445},
+  doi = {10.1234/biblioagent.2024.1024},
+  keywords = {agentic AI, large language models, climate science, long-horizon planning, large language models},
+  abstract = {We benchmark LLM-based agents on long-horizon climate science planning tasks and analyze failure modes in sub-goal decomposition.},
+  note = {Times Cited: 5}
+}

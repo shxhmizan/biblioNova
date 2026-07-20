@@ -24,6 +24,7 @@ export * from "@/lib/mock/sessions-list";
 
 export const MOCK_SESSION_DETAIL: SessionDetail = {
   id: MOCK_SESSION_ID,
+  name: "Agentic AI in Healthcare — Gap Analysis",
   filename: MOCK_FILENAME,
   goal: MOCK_GOAL,
   status: "completed",
