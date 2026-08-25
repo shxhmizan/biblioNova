@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 const MCP_SERVER_BY_AGENT: Partial<Record<string, string>> = {
   bibliometric_analyst: "bibliometric-analysis-server",
   science_mapping: "science-mapping-server",
+  data_acquisition: "data-acquisition-server",
 };
 
 function formatLine(event: AgentEvent): { prefix: string; text: string; tone: "default" | "muted" | "accent" } {
@@ -37,7 +38,9 @@ function formatLine(event: AgentEvent): { prefix: string; text: string; tone: "d
 
 export function McpLogLine({ event }: { event: AgentEvent }) {
   const { prefix, text, tone } = formatLine(event);
-  const isSpecialistServer = event.agent_name && SPECIALIST_AGENTS.includes(event.agent_name);
+  const isSpecialistServer =
+    event.agent_name &&
+    (SPECIALIST_AGENTS.includes(event.agent_name) || event.agent_name === "data_acquisition");
 
   return (
     <div className="flex gap-2 whitespace-pre-wrap break-all font-mono text-[11px] leading-relaxed">

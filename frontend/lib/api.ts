@@ -10,6 +10,9 @@
  * defense without a live server running.
  */
 import type {
+  AcquisitionCandidate,
+  AcquisitionSearchParams,
+  AcquisitionSearchResult,
   AgentEvent,
   AnalysisResult,
   ChatMessage,
@@ -25,6 +28,7 @@ import {
   MOCK_SESSIONS_LIST,
   MOCK_CHAT_PAIRS,
   MOCK_ROUTING_DECISION,
+  MOCK_SEARCH_CANDIDATES,
 } from "@/lib/mock";
 
 export const API_MODE: "mock" | "real" =
@@ -42,6 +46,12 @@ export class ApiError extends Error {
 
 export interface Api {
   uploadSession(file: File, goal: string): Promise<SessionSummary>;
+  searchPapers(params: AcquisitionSearchParams): Promise<AcquisitionSearchResult>;
+  confirmSearch(
+    id: string,
+    goal: string,
+    selected: AcquisitionCandidate[]
+  ): Promise<SessionSummary>;
   triggerAnalysis(id: string): Promise<{ id: string; status: string }>;
   getSession(id: string): Promise<SessionDetail>;
   getSessionEvents(id: string): Promise<AgentEvent[]>;
@@ -77,6 +87,21 @@ const realApi: Api = {
     form.append("file", file);
     form.append("goal", goal);
     return request<SessionSummary>("/sessions", { method: "POST", body: form });
+  },
+  async searchPapers(params) {
+    return request<AcquisitionSearchResult>("/sessions/search", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+  },
+  async confirmSearch(id, goal, selected) {
+    return request<SessionSummary>(`/sessions/${id}/confirm-search`, {
+      method: "POST",
+      body: JSON.stringify({
+        goal,
+        selected: selected.map((c) => ({ bibtex_entry: c.bibtex_entry })),
+      }),
+    });
   },
   async triggerAnalysis(id) {
     return request(`/sessions/${id}/analyze`, { method: "POST" });
@@ -127,7 +152,18 @@ const realApi: Api = {
 let mockAnalysisStartedAt = -Infinity;
 let mockSubmittedGoal: string = MOCK_SESSION_DETAIL.goal;
 let mockSessionName: string = MOCK_SESSION_DETAIL.name;
+let mockAcquisitionMode: "upload" | "agentic_search" = "upload";
+let mockSearchQuery: string | null = null;
+let mockSourcesUsed: string[] | null = null;
+let mockResultsRetrieved: number | null = null;
+let mockResultsSelected: number | null = null;
 const mockChatHistory: ChatMessage[] = [];
+
+const MOCK_MIN_RESULTS = 5;
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "search";
+}
 
 function mockElapsedMs(): number {
   return Date.now() - mockAnalysisStartedAt;
@@ -149,10 +185,62 @@ const mockApi: Api = {
     await delay(400);
     mockAnalysisStartedAt = -Infinity;
     mockSubmittedGoal = goal || MOCK_SESSION_DETAIL.goal;
+    mockAcquisitionMode = "upload";
+    mockSearchQuery = null;
+    mockSourcesUsed = null;
+    mockResultsRetrieved = null;
+    mockResultsSelected = null;
+    mockSessionName = MOCK_SESSION_DETAIL.name;
     return {
       id: MOCK_SESSION_DETAIL.id,
       name: MOCK_SESSION_DETAIL.name,
       filename: MOCK_SESSION_DETAIL.filename,
+      goal: mockSubmittedGoal,
+      status: "uploaded",
+      corpus_stats: MOCK_SESSION_DETAIL.corpus_stats,
+      created_at: new Date().toISOString(),
+    };
+  },
+  async searchPapers(params) {
+    await delay(1400);
+    const pool = MOCK_SEARCH_CANDIDATES.filter(
+      (c) =>
+        (!params.year_from || (c.year ?? 0) >= params.year_from) &&
+        (!params.year_to || (c.year ?? 9999) <= params.year_to)
+    );
+    // Short/narrow queries demonstrate the clarification path in the demo.
+    const tooNarrow = params.query.trim().length < 8;
+    const candidates = (tooNarrow ? pool.slice(0, 2) : pool).slice(0, params.max_results ?? 100);
+    const sourcesUsed = Array.from(new Set(candidates.map((c) => c.source)));
+    const status = candidates.length < MOCK_MIN_RESULTS ? "needs_clarification" : "awaiting_selection";
+
+    mockSearchQuery = params.query;
+    mockSourcesUsed = sourcesUsed;
+    mockResultsRetrieved = candidates.length;
+
+    return {
+      id: `search-${Date.now()}`,
+      status,
+      message:
+        status === "needs_clarification"
+          ? `Only found ${candidates.length} matching paper(s) across ${sourcesUsed.join(", ") || "no sources"}. Try a broader or differently-worded research area.`
+          : null,
+      sources_used: sourcesUsed,
+      results_retrieved: candidates.length,
+      candidates,
+    };
+  },
+  async confirmSearch(id, goal, selected) {
+    await delay(500);
+    mockAnalysisStartedAt = -Infinity;
+    mockSubmittedGoal = goal;
+    mockAcquisitionMode = "agentic_search";
+    mockResultsSelected = selected.length;
+    mockSessionName = mockSearchQuery ?? MOCK_SESSION_DETAIL.name;
+    return {
+      id: MOCK_SESSION_DETAIL.id,
+      name: mockSessionName,
+      filename: `${slugify(mockSessionName)}.bib`,
       goal: mockSubmittedGoal,
       status: "uploaded",
       corpus_stats: MOCK_SESSION_DETAIL.corpus_stats,
@@ -173,6 +261,11 @@ const mockApi: Api = {
       name: mockSessionName,
       goal: mockSubmittedGoal,
       status,
+      acquisition_mode: mockAcquisitionMode,
+      search_query: mockSearchQuery,
+      sources_used: mockSourcesUsed,
+      results_retrieved: mockResultsRetrieved,
+      results_selected: mockResultsSelected,
       routing_decision: coordinatorDone ? MOCK_ROUTING_DECISION : null,
       executive_summary: status === "completed" ? MOCK_SESSION_DETAIL.executive_summary : null,
     };

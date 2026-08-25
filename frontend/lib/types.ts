@@ -7,7 +7,8 @@ export type AgentName =
   | "science_mapping"
   | "text_mining"
   | "insights_reporting"
-  | "research_advisor";
+  | "research_advisor"
+  | "data_acquisition";
 
 export const SPECIALIST_AGENTS: AgentName[] = [
   "bibliometric_analyst",
@@ -31,14 +32,19 @@ export const AGENT_LABELS: Record<AgentName, string> = {
   text_mining: "Text Mining",
   insights_reporting: "Insights & Reporting",
   research_advisor: "Research Advisor",
+  data_acquisition: "Data Acquisition",
 };
 
 export type SessionStatusValue =
   | "uploaded"
+  | "searching"
+  | "awaiting_selection"
   | "running"
   | "completed"
   | "failed"
   | "needs_clarification";
+
+export type AcquisitionMode = "upload" | "agentic_search";
 
 export interface SkippedRecord {
   key: string | null;
@@ -86,6 +92,11 @@ export interface SessionDetail {
   goal: string;
   status: SessionStatusValue;
   corpus_stats: CorpusStats;
+  acquisition_mode: AcquisitionMode;
+  search_query: string | null;
+  sources_used: string[] | null;
+  results_retrieved: number | null;
+  results_selected: number | null;
   routing_decision: RoutingDecision | null;
   executive_summary: string | null;
   error_message: string | null;
@@ -268,6 +279,40 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   created_at: string;
+}
+
+// ---- Agentic Search (Data Acquisition) ----
+
+export interface AcquisitionCandidate {
+  source: "openalex" | "arxiv";
+  source_id: string;
+  title: string;
+  authors: string[];
+  year: number | null;
+  venue: string;
+  abstract: string;
+  doi: string;
+  times_cited: number;
+  is_oa: boolean;
+  url: string;
+  bibtex_key: string;
+  bibtex_entry: string;
+}
+
+export interface AcquisitionSearchParams {
+  query: string;
+  year_from?: number;
+  year_to?: number;
+  max_results?: number;
+}
+
+export interface AcquisitionSearchResult {
+  id: string;
+  status: "awaiting_selection" | "needs_clarification";
+  message: string | null;
+  sources_used: string[];
+  results_retrieved: number;
+  candidates: AcquisitionCandidate[];
 }
 
 // ---- Progress-page UI state (client-derived, not a backend shape) ----

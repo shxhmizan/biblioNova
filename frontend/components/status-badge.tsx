@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 
 export type SessionStatus =
   | "uploaded"
+  | "searching"
+  | "awaiting_selection"
   | "running"
   | "completed"
   | "failed"
@@ -11,6 +13,14 @@ const STATUS_CONFIG: Record<SessionStatus, { label: string; className: string }>
   uploaded: {
     label: "Uploaded",
     className: "bg-muted text-muted-foreground",
+  },
+  searching: {
+    label: "Searching",
+    className: "bg-[color-mix(in_oklch,var(--primary)_16%,transparent)] text-primary",
+  },
+  awaiting_selection: {
+    label: "Awaiting selection",
+    className: "bg-[color-mix(in_oklch,var(--primary)_16%,transparent)] text-primary",
   },
   running: {
     label: "Running",

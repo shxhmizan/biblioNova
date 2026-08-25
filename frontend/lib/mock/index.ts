@@ -21,6 +21,7 @@ export * from "@/lib/mock/gaps";
 export * from "@/lib/mock/progress-timeline";
 export * from "@/lib/mock/chat";
 export * from "@/lib/mock/sessions-list";
+export * from "@/lib/mock/acquisition";
 
 export const MOCK_SESSION_DETAIL: SessionDetail = {
   id: MOCK_SESSION_ID,
@@ -29,6 +30,11 @@ export const MOCK_SESSION_DETAIL: SessionDetail = {
   goal: MOCK_GOAL,
   status: "completed",
   corpus_stats: MOCK_CORPUS_STATS,
+  acquisition_mode: "upload",
+  search_query: null,
+  sources_used: null,
+  results_retrieved: null,
+  results_selected: null,
   routing_decision: MOCK_ROUTING_DECISION,
   executive_summary: MOCK_EXECUTIVE_SUMMARY,
   error_message: null,
