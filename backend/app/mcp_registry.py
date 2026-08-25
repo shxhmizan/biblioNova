@@ -14,6 +14,7 @@ MCP_SERVER_MODULES: dict[str, str] = {
     "bibtex_parser": "mcp_servers.bibtex_parser.server",
     "bibliometric_analysis": "mcp_servers.bibliometric_analysis.server",
     "science_mapping": "mcp_servers.science_mapping.server",
+    "data_acquisition": "mcp_servers.data_acquisition.server",
 }
 
 
