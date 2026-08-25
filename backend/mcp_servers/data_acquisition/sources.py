@@ -11,7 +11,7 @@ from datetime import datetime
 import httpx
 
 OPENALEX_BASE_URL = "https://api.openalex.org/works"
-ARXIV_BASE_URL = "http://export.arxiv.org/api/query"
+ARXIV_BASE_URL = "https://export.arxiv.org/api/query"
 REQUEST_TIMEOUT_SECONDS = 15.0
 
 ARXIV_NS = {"atom": "http://www.w3.org/2005/Atom"}
@@ -84,7 +84,9 @@ async def search_openalex(
         params["mailto"] = mailto
 
     try:
-        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SECONDS) as client:
+        async with httpx.AsyncClient(
+            timeout=REQUEST_TIMEOUT_SECONDS, follow_redirects=True
+        ) as client:
             response = await client.get(OPENALEX_BASE_URL, params=params)
             response.raise_for_status()
             data = response.json()
@@ -144,7 +146,9 @@ async def search_arxiv(query: str, max_results: int = 50) -> list[dict]:
         "sortOrder": "descending",
     }
     try:
-        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SECONDS) as client:
+        async with httpx.AsyncClient(
+            timeout=REQUEST_TIMEOUT_SECONDS, follow_redirects=True
+        ) as client:
             response = await client.get(ARXIV_BASE_URL, params=params)
             response.raise_for_status()
             root = ET.fromstring(response.text)
