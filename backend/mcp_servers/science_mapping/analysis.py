@@ -94,3 +94,42 @@ def cocitation_analysis(records: list[dict]) -> dict:
     edges = [{"source": a, "target": b, "weight": count} for (a, b), count in pair_counts.items()]
 
     return {"nodes": nodes, "edges": edges}
+
+
+def bibliographic_coupling_analysis(records: list[dict], min_shared_refs: int = 2) -> dict:
+    """Paper bibliographic-coupling network: two papers are linked if they share
+    entries in their own cited_references lists, weighted by the number shared.
+
+    Depends on the same optional 'cited-references' field as cocitation_analysis
+    (absent from standard WoS BibTeX exports), so it fails the same way when
+    that data isn't present rather than fabricating a result.
+    """
+    ref_sets = [set(r.get("cited_references", [])) for r in records]
+
+    if not any(ref_sets):
+        return {
+            "nodes": [],
+            "edges": [],
+            "note": (
+                "No cited-reference data found in this corpus export. Standard Web of "
+                "Science BibTeX exports do not include reference lists; bibliographic "
+                "coupling requires a 'cited-references' field populated by a converter "
+                "that preserves it."
+            ),
+        }
+
+    edges = []
+    coupled_ids: set[str] = set()
+    for (i, a), (j, b) in combinations(enumerate(records), 2):
+        shared = len(ref_sets[i] & ref_sets[j])
+        if shared >= min_shared_refs:
+            edges.append({"source": a["id"], "target": b["id"], "weight": shared})
+            coupled_ids.update((a["id"], b["id"]))
+
+    nodes = [
+        {"id": r["id"], "title": r["title"], "times_cited": r.get("times_cited", 0)}
+        for r in records
+        if r["id"] in coupled_ids
+    ]
+
+    return {"nodes": nodes, "edges": edges}

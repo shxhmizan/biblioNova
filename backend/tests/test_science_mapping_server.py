@@ -65,3 +65,31 @@ def test_cocitation_ignores_references_outside_corpus():
     result = analysis.cocitation_analysis(records)
     assert result["nodes"] == []
     assert "note" in result
+
+
+def test_bibliographic_coupling_returns_note_when_no_reference_data():
+    records = [{"id": "a", "title": "A", "cited_references": []}]
+    result = analysis.bibliographic_coupling_analysis(records)
+    assert result["nodes"] == []
+    assert "note" in result
+
+
+def test_bibliographic_coupling_links_papers_sharing_references():
+    records = [
+        {"id": "a", "title": "A", "times_cited": 5, "cited_references": ["r1", "r2", "r3"]},
+        {"id": "b", "title": "B", "times_cited": 2, "cited_references": ["r1", "r2", "r4"]},
+        {"id": "c", "title": "C", "times_cited": 1, "cited_references": ["r5"]},
+    ]
+    result = analysis.bibliographic_coupling_analysis(records, min_shared_refs=2)
+    assert {n["id"] for n in result["nodes"]} == {"a", "b"}
+    assert result["edges"] == [{"source": "a", "target": "b", "weight": 2}]
+
+
+def test_bibliographic_coupling_filters_by_min_shared_refs():
+    records = [
+        {"id": "a", "title": "A", "times_cited": 5, "cited_references": ["r1", "r2"]},
+        {"id": "b", "title": "B", "times_cited": 2, "cited_references": ["r1", "r3"]},
+    ]
+    result = analysis.bibliographic_coupling_analysis(records, min_shared_refs=2)
+    assert result["nodes"] == []
+    assert result["edges"] == []

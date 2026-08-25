@@ -32,5 +32,16 @@ def cocitation_analysis(records: list[dict]) -> dict:
     return analysis.cocitation_analysis(records)
 
 
+@mcp.tool()
+def bibliographic_coupling_analysis(records: list[dict], min_shared_refs: int = 2) -> dict:
+    """Build a bibliographic-coupling network: papers linked by shared cited references.
+
+    Args:
+        records: Parsed BibTeX records as returned by bibtex-parser-server's parse_bibtex.
+        min_shared_refs: Minimum number of shared references for an edge to appear.
+    """
+    return analysis.bibliographic_coupling_analysis(records, min_shared_refs=min_shared_refs)
+
+
 if __name__ == "__main__":
     mcp.run()
