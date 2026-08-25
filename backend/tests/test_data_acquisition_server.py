@@ -89,6 +89,19 @@ def test_to_bibtex_omits_missing_fields_rather_than_fabricating():
     assert "year = " not in entry
 
 
+def test_to_bibtex_preserves_times_cited_via_note_field():
+    result = bibtex.to_bibtex([RECORD_A])
+    entry = result["records"][0]["bibtex_entry"]
+    assert "note = {Times Cited: 12}" in entry
+
+
+def test_to_bibtex_omits_note_when_uncited():
+    uncited = {**RECORD_A, "doi": "10.1/uncited", "times_cited": 0}
+    result = bibtex.to_bibtex([uncited])
+    entry = result["records"][0]["bibtex_entry"]
+    assert "note = " not in entry
+
+
 def test_to_bibtex_arxiv_venue_falls_back_to_preprint_id():
     arxiv_record = {
         "source": "arxiv",

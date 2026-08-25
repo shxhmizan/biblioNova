@@ -76,6 +76,12 @@ def _build_entry(record: dict, key: str) -> str:
     )
     doi = _sanitize(record.get("doi", ""))
     abstract = _sanitize(record.get("abstract", ""))
+    times_cited = record.get("times_cited") or 0
+    # bibtex-parser-server reads citation counts from a WoS-style "Times
+    # Cited: N" substring inside the note field (see _parse_times_cited) --
+    # writing that same convention here is how OpenAlex's real citation
+    # counts survive the round trip into the parsed corpus.
+    note = f"Times Cited: {times_cited}" if times_cited else ""
 
     fields = [
         f"  author = {{{authors}}}," if authors else None,
@@ -83,6 +89,7 @@ def _build_entry(record: dict, key: str) -> str:
         f"  journal = {{{venue}}}," if venue else None,
         f"  year = {{{year}}}," if year else None,
         f"  doi = {{{doi}}}," if doi else None,
+        f"  note = {{{note}}}," if note else None,
         f"  abstract = {{{abstract}}}," if abstract else None,
     ]
     body = "\n".join(f for f in fields if f)
