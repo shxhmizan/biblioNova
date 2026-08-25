@@ -102,18 +102,25 @@ async def run_search(
             )
             return records if isinstance(records, list) else []
 
+        # Split the total budget across sources at the call site rather than
+        # truncating the merged list afterwards -- truncating post-merge
+        # would silently favor whichever source happens to be concatenated
+        # first and could drop a source's results entirely.
+        per_source_max = max(1, max_results // 2)
         openalex_records, arxiv_records = await asyncio.gather(
             _call_source(
                 "search_openalex",
                 "openalex",
                 {
                     "query": query,
-                    "max_results": max_results,
+                    "max_results": per_source_max,
                     "year_from": year_from,
                     "year_to": year_to,
                 },
             ),
-            _call_source("search_arxiv", "arxiv", {"query": query, "max_results": max_results}),
+            _call_source(
+                "search_arxiv", "arxiv", {"query": query, "max_results": per_source_max}
+            ),
         )
 
         sources_used = []
