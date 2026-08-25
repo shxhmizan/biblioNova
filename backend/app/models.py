@@ -25,11 +25,20 @@ class AnalysisSession(Base):
     filename: Mapped[str] = mapped_column(String(255))
     goal: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(32), default="uploaded")
-    # uploaded -> needs_clarification | running -> completed | failed
+    # upload path:         uploaded -> needs_clarification | running -> completed | failed
+    # agentic_search path: awaiting_selection -> needs_clarification | uploaded -> (same as above)
 
     raw_bib: Mapped[str] = mapped_column(Text)
     corpus_stats: Mapped[dict] = mapped_column(JSON, default=dict)
     parsed_records: Mapped[list] = mapped_column(JSON, default=list)
+
+    # How this session's corpus was assembled — "upload" (default, existing
+    # rows backfilled to this) or "agentic_search" (Data Acquisition agent).
+    acquisition_mode: Mapped[str] = mapped_column(String(32), default="upload")
+    search_query: Mapped[str | None] = mapped_column(Text, nullable=True)
+    sources_used: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    results_retrieved: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    results_selected: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     routing_decision: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     executive_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
