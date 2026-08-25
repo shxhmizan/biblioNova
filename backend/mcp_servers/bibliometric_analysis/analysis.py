@@ -1,6 +1,13 @@
 """Core analysis functions for the bibliometric-analysis-server."""
 
 from collections import Counter
+from itertools import combinations
+
+_NO_AFFILIATION_DATA_NOTE = (
+    "No author affiliation data available. Standard Web of Science BibTeX exports "
+    "parsed by this system carry author names only, not institution or country "
+    "affiliations, so this level cannot be computed for this corpus."
+)
 
 
 def publication_trend(records: list[dict]) -> dict:
@@ -84,4 +91,48 @@ def citation_analysis(records: list[dict], top_n: int = 10) -> dict:
         "most_cited_papers": most_cited_papers,
         "top_authors": top_authors,
         "top_journals": top_journals,
+    }
+
+
+def coauthorship_network_analysis(records: list[dict], top_n: int = 10) -> dict:
+    """Co-authorship collaboration network at author level, plus top collaborating
+    pairs. Institution- and country-level graphs and the international-collaboration
+    rate all require affiliation data this system's BibTeX parser does not currently
+    extract, so those come back as explicit "not available" notes rather than
+    fabricated results.
+    """
+    pair_counts: Counter[tuple[str, str]] = Counter()
+    paper_counts: Counter[str] = Counter()
+
+    for r in records:
+        raw_names = r.get("author", "").split(" and ")
+        authors = sorted({name.strip() for name in raw_names if name.strip()})
+        for name in authors:
+            paper_counts[name] += 1
+        for a, b in combinations(authors, 2):
+            pair_counts[(a, b)] += 1
+
+    coauthored = {name for pair in pair_counts for name in pair}
+    author_graph = {
+        "nodes": [
+            {"id": name, "label": name, "paper_count": paper_counts[name]} for name in coauthored
+        ],
+        "edges": [
+            {"source": a, "target": b, "weight": count} for (a, b), count in pair_counts.items()
+        ],
+    }
+
+    top_collaborating_pairs = [
+        {"a": a, "b": b, "shared_papers": count} for (a, b), count in pair_counts.most_common(top_n)
+    ]
+
+    return {
+        "author": author_graph,
+        "institution": {"nodes": [], "edges": [], "note": _NO_AFFILIATION_DATA_NOTE},
+        "country": {"nodes": [], "edges": [], "note": _NO_AFFILIATION_DATA_NOTE},
+        "top_collaborating_pairs": top_collaborating_pairs,
+        "international_collaboration_rate": {
+            "rate_percent": None,
+            "note": _NO_AFFILIATION_DATA_NOTE,
+        },
     }

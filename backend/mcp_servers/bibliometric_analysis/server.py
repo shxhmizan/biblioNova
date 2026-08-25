@@ -32,5 +32,16 @@ def citation_analysis(records: list[dict], top_n: int = 10) -> dict:
     return analysis.citation_analysis(records, top_n=top_n)
 
 
+@mcp.tool()
+def coauthorship_network_analysis(records: list[dict], top_n: int = 10) -> dict:
+    """Author-level co-authorship collaboration network plus top collaborating pairs.
+
+    Args:
+        records: Parsed BibTeX records as returned by bibtex-parser-server's parse_bibtex.
+        top_n: How many top collaborating author pairs to return.
+    """
+    return analysis.coauthorship_network_analysis(records, top_n=top_n)
+
+
 if __name__ == "__main__":
     mcp.run()

@@ -55,3 +55,39 @@ def test_citation_analysis_handles_empty_corpus():
     assert result["total_publications"] == 0
     assert result["average_citations_per_paper"] == 0.0
     assert result["most_cited_papers"] == []
+
+
+def test_coauthorship_builds_author_network_from_known_pairs():
+    result = analysis.coauthorship_network_analysis(RECORDS)
+    author_graph = result["author"]
+
+    node_ids = {n["id"] for n in author_graph["nodes"]}
+    assert node_ids == {"Smith, J.", "Doe, A.", "Lee, K."}
+
+    edge_pairs = {frozenset((e["source"], e["target"])): e["weight"] for e in author_graph["edges"]}
+    assert edge_pairs == {
+        frozenset({"Smith, J.", "Doe, A."}): 1,
+        frozenset({"Doe, A.", "Lee, K."}): 1,
+    }
+
+
+def test_coauthorship_top_pairs_ranked_by_shared_papers():
+    records = [
+        {"id": "a", "author": "Smith, J. and Doe, A."},
+        {"id": "b", "author": "Smith, J. and Doe, A."},
+        {"id": "c", "author": "Doe, A. and Lee, K."},
+    ]
+    result = analysis.coauthorship_network_analysis(records, top_n=5)
+    top = result["top_collaborating_pairs"]
+    assert top[0]["shared_papers"] == 2
+    assert {top[0]["a"], top[0]["b"]} == {"Smith, J.", "Doe, A."}
+
+
+def test_coauthorship_institution_and_country_report_no_data():
+    result = analysis.coauthorship_network_analysis(RECORDS)
+    assert result["institution"]["nodes"] == []
+    assert "note" in result["institution"]
+    assert result["country"]["nodes"] == []
+    assert "note" in result["country"]
+    assert result["international_collaboration_rate"]["rate_percent"] is None
+    assert "note" in result["international_collaboration_rate"]
