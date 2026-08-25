@@ -41,6 +41,26 @@ const MOST_CITED_PAPERS = [
   { id: "dubois2024evaluation", title: "Benchmarking Long-Horizon Planning in LLM-Based Agents", year: 2024, times_cited: 178 },
 ];
 
+const NO_AFFILIATION_DATA_NOTE =
+  "No author affiliation data available. Standard Web of Science BibTeX exports " +
+  "parsed by this system carry author names only, not institution or country " +
+  "affiliations, so this level cannot be computed for this corpus.";
+
+// Collaboration pairs among the top-cited authors — weight = shared papers.
+const COAUTHOR_EDGES: { source: string; target: string; weight: number }[] = [
+  { source: "Chen, L.", target: "Rahman, S. A.", weight: 9 },
+  { source: "Chen, L.", target: "Tanaka, H.", weight: 5 },
+  { source: "Rahman, S. A.", target: "Okafor, N.", weight: 4 },
+  { source: "Tanaka, H.", target: "Kumar, P.", weight: 7 },
+  { source: "Kumar, P.", target: "Park, J. H.", weight: 6 },
+  { source: "Silva, M. F.", target: "Dubois, C.", weight: 3 },
+  { source: "Okafor, N.", target: "Novak, T.", weight: 2 },
+  { source: "Park, J. H.", target: "Ibrahim, N.", weight: 2 },
+];
+
+const coauthoredNames = new Set(COAUTHOR_EDGES.flatMap((e) => [e.source, e.target]));
+const paperCountByAuthor = new Map(AUTHORS.map((a) => [a.author, a.publication_count]));
+
 export const MOCK_BIBLIOMETRIC_RESULT: BibliometricAnalystResult = {
   publication_trend: {
     years: YEARS,
@@ -57,5 +77,25 @@ export const MOCK_BIBLIOMETRIC_RESULT: BibliometricAnalystResult = {
     most_cited_papers: MOST_CITED_PAPERS,
     top_authors: AUTHORS,
     top_journals: JOURNALS,
+  },
+  coauthorship_network_analysis: {
+    author: {
+      nodes: Array.from(coauthoredNames).map((name) => ({
+        id: name,
+        label: name,
+        paper_count: paperCountByAuthor.get(name) ?? 1,
+      })),
+      edges: COAUTHOR_EDGES,
+    },
+    // Mirrors the real backend, which cannot compute these levels either —
+    // the BibTeX parser doesn't extract affiliation data (see CLAUDE.md).
+    institution: { nodes: [], edges: [], note: NO_AFFILIATION_DATA_NOTE },
+    country: { nodes: [], edges: [], note: NO_AFFILIATION_DATA_NOTE },
+    top_collaborating_pairs: COAUTHOR_EDGES.map((e) => ({
+      a: e.source,
+      b: e.target,
+      shared_papers: e.weight,
+    })).sort((a, b) => b.shared_papers - a.shared_papers),
+    international_collaboration_rate: { rate_percent: null, note: NO_AFFILIATION_DATA_NOTE },
   },
 };

@@ -21,8 +21,10 @@ import { ClusterCard } from "@/components/cluster-card";
 import { RecommendationCard } from "@/components/recommendation-card";
 import { NotRunPlaceholder } from "@/components/not-run-placeholder";
 import { NetworkGraph } from "@/components/network-graph";
+import { CollaborationSection } from "@/components/collaboration-section";
 import { WordCloud } from "@/components/word-cloud";
 import { ChatDrawer } from "@/components/chat-drawer";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DashboardTour, type TourStep } from "@/components/onboarding/dashboard-tour";
 import { McpLogLine } from "@/components/mcp-log-line";
 import { Button } from "@/components/ui/button";
@@ -49,6 +51,7 @@ import type {
   AgentEvent,
   AnalysisResult,
   BibliometricAnalystResult,
+  CocitationAnalysis,
   InsightsReportingResult,
   ResearchAdvisorResult,
   ScienceMappingResult,
@@ -287,6 +290,18 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                   />
                 </div>
               )}
+
+              {bibliometric.coauthorship_network_analysis && (
+                <div>
+                  <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Collaboration
+                  </h3>
+                  <CollaborationSection
+                    data={bibliometric.coauthorship_network_analysis}
+                    mode={mode}
+                  />
+                </div>
+              )}
             </div>
           )}
         </section>
@@ -302,61 +317,62 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               }
             />
           ) : (
-            <div className="space-y-6">
-              {scienceMapping.co_occurrence_analysis && (
-                <div>
-                  <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Keyword co-occurrence network
-                  </h3>
-                  <NetworkGraph
-                    mode={mode}
-                    clusterLabels={[...SCIENCE_MAPPING_CLUSTER_LABELS]}
-                    nodes={scienceMapping.co_occurrence_analysis.nodes.map((n) => ({
-                      id: n.id,
-                      label: n.label,
-                      value: n.frequency,
-                      cluster: n.cluster,
-                    }))}
-                    links={scienceMapping.co_occurrence_analysis.edges}
-                  />
-                </div>
-              )}
-              {scienceMapping.cocitation_analysis && (
-                <div>
-                  <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Co-citation network
-                  </h3>
-                  {scienceMapping.cocitation_analysis.note ? (
-                    <NotRunPlaceholder reason={scienceMapping.cocitation_analysis.note} />
-                  ) : (
-                    (() => {
-                      const cocitation = scienceMapping.cocitation_analysis;
-                      // Co-citation has no semantic cluster labels from the
-                      // MCP tool (unlike co-occurrence) — cluster it from the
-                      // network's own structure, same as VOSviewer does.
-                      const clusterByNode = assignClustersByComponent(cocitation.nodes, cocitation.edges);
-                      const clusterCount = new Set(clusterByNode.values()).size;
-                      return (
-                        <NetworkGraph
-                          mode={mode}
-                          clusterLabels={Array.from(
-                            { length: clusterCount },
-                            (_, i) => `Cluster ${i + 1}`
-                          )}
-                          nodes={cocitation.nodes.map((n) => ({
-                            id: n.id,
-                            label: n.title,
-                            value: n.times_cited || 1,
-                            cluster: clusterByNode.get(n.id) ?? 0,
-                          }))}
-                          links={cocitation.edges}
-                        />
-                      );
-                    })()
+            (() => {
+              const networkTabs = [
+                scienceMapping.co_occurrence_analysis && {
+                  value: "co_occurrence",
+                  label: "Co-occurrence",
+                },
+                scienceMapping.cocitation_analysis && { value: "cocitation", label: "Co-citation" },
+                scienceMapping.bibliographic_coupling_analysis && {
+                  value: "coupling",
+                  label: "Bibliographic coupling",
+                },
+              ].filter((t): t is { value: string; label: string } => Boolean(t));
+
+              if (networkTabs.length === 0) return null;
+
+              return (
+                <Tabs defaultValue={networkTabs[0].value}>
+                  <TabsList>
+                    {networkTabs.map((t) => (
+                      <TabsTrigger key={t.value} value={t.value}>
+                        {t.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+
+                  {scienceMapping.co_occurrence_analysis && (
+                    <TabsContent value="co_occurrence">
+                      <NetworkGraph
+                        mode={mode}
+                        clusterLabels={[...SCIENCE_MAPPING_CLUSTER_LABELS]}
+                        nodes={scienceMapping.co_occurrence_analysis.nodes.map((n) => ({
+                          id: n.id,
+                          label: n.label,
+                          value: n.frequency,
+                          cluster: n.cluster,
+                        }))}
+                        links={scienceMapping.co_occurrence_analysis.edges}
+                      />
+                    </TabsContent>
                   )}
-                </div>
-              )}
-            </div>
+                  {scienceMapping.cocitation_analysis && (
+                    <TabsContent value="cocitation">
+                      <PaperNetworkView data={scienceMapping.cocitation_analysis} mode={mode} />
+                    </TabsContent>
+                  )}
+                  {scienceMapping.bibliographic_coupling_analysis && (
+                    <TabsContent value="coupling">
+                      <PaperNetworkView
+                        data={scienceMapping.bibliographic_coupling_analysis}
+                        mode={mode}
+                      />
+                    </TabsContent>
+                  )}
+                </Tabs>
+              );
+            })()
           )}
         </section>
 
@@ -485,6 +501,37 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
       <ChatDrawer sessionId={id} suggestedQuestions={MOCK_CHAT_PAIRS.map((p) => p.question)} />
     </div>
+  );
+}
+
+// Shared by co-citation and bibliographic coupling — both are paper-to-paper
+// networks with the identical {nodes, edges, note?} shape and neither carries
+// semantic cluster labels from its MCP tool, so both are clustered from the
+// network's own structure, same as VOSviewer does.
+function PaperNetworkView({
+  data,
+  mode,
+}: {
+  data: CocitationAnalysis;
+  mode: "light" | "dark";
+}) {
+  if (data.note) {
+    return <NotRunPlaceholder reason={data.note} />;
+  }
+  const clusterByNode = assignClustersByComponent(data.nodes, data.edges);
+  const clusterCount = new Set(clusterByNode.values()).size;
+  return (
+    <NetworkGraph
+      mode={mode}
+      clusterLabels={Array.from({ length: clusterCount }, (_, i) => `Cluster ${i + 1}`)}
+      nodes={data.nodes.map((n) => ({
+        id: n.id,
+        label: n.title,
+        value: n.times_cited || 1,
+        cluster: clusterByNode.get(n.id) ?? 0,
+      }))}
+      links={data.edges}
+    />
   );
 }
 

@@ -137,9 +137,43 @@ export interface CitationAnalysis {
   top_journals: { journal: string; total_citations: number; publication_count: number }[];
 }
 
+export type CollaborationLevel = "author" | "institution" | "country";
+
+export interface CoauthorshipNode {
+  id: string;
+  label: string;
+  paper_count: number;
+}
+
+export interface CoauthorshipGraph {
+  nodes: CoauthorshipNode[];
+  edges: GraphEdge[];
+  note?: string;
+}
+
+export interface CollaboratingPair {
+  a: string;
+  b: string;
+  shared_papers: number;
+}
+
+export interface InternationalCollaborationRate {
+  rate_percent: number | null;
+  note?: string;
+}
+
+export interface CoauthorshipNetworkResult {
+  author: CoauthorshipGraph;
+  institution: CoauthorshipGraph;
+  country: CoauthorshipGraph;
+  top_collaborating_pairs: CollaboratingPair[];
+  international_collaboration_rate: InternationalCollaborationRate;
+}
+
 export interface BibliometricAnalystResult {
   publication_trend?: PublicationTrend;
   citation_analysis?: CitationAnalysis;
+  coauthorship_network_analysis?: CoauthorshipNetworkResult;
 }
 
 export interface CoOccurrenceNode {
@@ -176,6 +210,7 @@ export interface CocitationAnalysis {
 export interface ScienceMappingResult {
   co_occurrence_analysis?: CoOccurrenceAnalysis;
   cocitation_analysis?: CocitationAnalysis;
+  bibliographic_coupling_analysis?: CocitationAnalysis;
 }
 
 export interface SemanticCluster {

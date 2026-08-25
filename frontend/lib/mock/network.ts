@@ -118,7 +118,23 @@ const cocitationEdges: GraphEdge[] = [
   { source: "kumar2023rag", target: "park2023llm", weight: 7 },
 ];
 
+// Bibliographic coupling: papers that share cited references, as distinct
+// from co-citation's "cited together by a third paper" relation — reuses the
+// same 8 most-cited papers but a different (denser, since shared-reference
+// overlap is more common than being co-cited) edge structure.
+const couplingEdges: GraphEdge[] = [
+  { source: "chen2022agentic", target: "rahman2021multiagent", weight: 9 },
+  { source: "chen2022agentic", target: "silva2020reinforcement", weight: 5 },
+  { source: "rahman2021multiagent", target: "silva2020reinforcement", weight: 13 },
+  { source: "tanaka2023toolaugmented", target: "kumar2023rag", weight: 10 },
+  { source: "tanaka2023toolaugmented", target: "park2023llm", weight: 15 },
+  { source: "kumar2023rag", target: "park2023llm", weight: 6 },
+  { source: "okafor2022healthcare", target: "dubois2024evaluation", weight: 4 },
+  { source: "chen2022agentic", target: "dubois2024evaluation", weight: 3 },
+];
+
 export const MOCK_SCIENCE_MAPPING_RESULT: ScienceMappingResult = {
   co_occurrence_analysis: { nodes, edges, clusters: CLUSTER_THEMES.length },
   cocitation_analysis: { nodes: cocitationNodes, edges: cocitationEdges },
+  bibliographic_coupling_analysis: { nodes: cocitationNodes, edges: couplingEdges },
 };
