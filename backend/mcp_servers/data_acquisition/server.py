@@ -6,6 +6,7 @@ Run standalone for manual testing:
 
 from mcp.server.fastmcp import FastMCP
 
+from app.config import settings
 from mcp_servers.data_acquisition import bibtex, sources
 
 mcp = FastMCP("data-acquisition-server")
@@ -27,7 +28,11 @@ async def search_openalex(
         year_to: Optional inclusive upper bound on publication year.
     """
     return await sources.search_openalex(
-        query, max_results=max_results, year_from=year_from, year_to=year_to
+        query,
+        max_results=max_results,
+        year_from=year_from,
+        year_to=year_to,
+        mailto=settings.openalex_mailto or None,
     )
 
 

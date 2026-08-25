@@ -33,6 +33,11 @@ class SessionDetailResponse(BaseModel):
     goal: str
     status: str
     corpus_stats: dict
+    acquisition_mode: str
+    search_query: str | None
+    sources_used: list[str] | None
+    results_retrieved: int | None
+    results_selected: int | None
     routing_decision: dict | None
     executive_summary: str | None
     error_message: str | None
@@ -95,3 +100,47 @@ class ChatMessageResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# ---- Agentic Search (Data Acquisition) ----
+
+
+class AcquisitionSearchRequest(BaseModel):
+    query: str = Field(..., min_length=3, max_length=500)
+    year_from: int | None = Field(None, ge=1900, le=2100)
+    year_to: int | None = Field(None, ge=1900, le=2100)
+    max_results: int = Field(100, ge=5, le=500)
+
+
+class AcquisitionCandidate(BaseModel):
+    source: str
+    source_id: str
+    title: str
+    authors: list[str]
+    year: int | None
+    venue: str
+    abstract: str
+    doi: str
+    times_cited: int
+    is_oa: bool
+    url: str
+    bibtex_key: str
+    bibtex_entry: str
+
+
+class AcquisitionSearchResponse(BaseModel):
+    id: str
+    status: str  # "awaiting_selection" | "needs_clarification"
+    message: str | None
+    sources_used: list[str]
+    results_retrieved: int
+    candidates: list[AcquisitionCandidate]
+
+
+class SelectedRecord(BaseModel):
+    bibtex_entry: str
+
+
+class AcquisitionConfirmRequest(BaseModel):
+    goal: str = Field(..., min_length=20)
+    selected: list[SelectedRecord] = Field(..., min_length=1)

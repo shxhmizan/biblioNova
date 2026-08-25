@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     openrouter_model: str = "openai/gpt-4o-mini"
+    # Optional: OpenAlex's "polite pool" gives higher rate limits to requests
+    # that identify a contact. Omitted from requests entirely when unset.
+    openalex_mailto: str = ""
     # Plain comma-separated string, not list[str] — pydantic-settings requires
     # JSON to populate a list field from an env var, which is awkward to set
     # in a host's dashboard (e.g. Render). "http://a.com,http://b.com" is not.

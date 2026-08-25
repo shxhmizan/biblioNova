@@ -61,6 +61,7 @@ async def search_openalex(
     max_results: int = 50,
     year_from: int | None = None,
     year_to: int | None = None,
+    mailto: str | None = None,
 ) -> list[dict]:
     filters = []
     if year_from is not None:
@@ -79,6 +80,8 @@ async def search_openalex(
     }
     if filters:
         params["filter"] = ",".join(filters)
+    if mailto:
+        params["mailto"] = mailto
 
     try:
         async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SECONDS) as client:
