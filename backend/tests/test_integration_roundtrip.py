@@ -147,6 +147,9 @@ def test_single_specialist_round_trip(client, monkeypatch):
     citations = results["bibliometric_analyst"]["citation_analysis"]
     assert citations["total_publications"] == 46
     assert len(citations["top_authors"]) > 0
+    coauthorship = results["bibliometric_analyst"]["coauthorship_network_analysis"]
+    assert "author" in coauthorship
+    assert "top_collaborating_pairs" in coauthorship
 
     gaps = results["insights_reporting"]["gaps"]
     assert [g["id"] for g in gaps] == ["gap-1", "gap-2"]
@@ -157,7 +160,8 @@ def test_single_specialist_round_trip(client, monkeypatch):
 
     events = client.get(f"/sessions/{session_id}/events").json()
     event_types = [e["event_type"] for e in events]
-    assert event_types.count("tool_called") == 2  # publication_trend + citation_analysis
+    # publication_trend + citation_analysis + coauthorship_network_analysis
+    assert event_types.count("tool_called") == 3
     assert "tool_discovered" in event_types
 
     skipped = {e["agent_name"] for e in events if e["event_type"] == "agent_skipped"}
@@ -225,6 +229,8 @@ def test_all_specialists_activated_round_trip(client, monkeypatch):
 
     co_occurrence = results["science_mapping"]["co_occurrence_analysis"]
     assert len(co_occurrence["nodes"]) > 0
+    assert "bibliographic_coupling_analysis" in results["science_mapping"]
+    assert "coauthorship_network_analysis" in results["bibliometric_analyst"]
 
     clusters = results["text_mining"]["clusters"]
     assert results["text_mining"]["n_clusters"] > 0
