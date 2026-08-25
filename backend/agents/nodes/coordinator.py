@@ -20,10 +20,12 @@ from app.config import settings
 
 SPECIALIST_DESCRIPTIONS: dict[str, str] = {
     "bibliometric_analyst": (
-        "publication trends over time, citation analysis, author/journal rankings."
+        "publication trends over time, citation analysis, author/journal rankings, "
+        "co-authorship collaboration networks."
     ),
     "science_mapping": (
-        "keyword co-occurrence and co-citation networks revealing thematic structure."
+        "keyword co-occurrence, co-citation, and bibliographic coupling networks "
+        "revealing thematic structure."
     ),
     "text_mining": "semantic clustering of titles/abstracts into auto-labeled themes.",
 }
