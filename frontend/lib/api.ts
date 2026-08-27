@@ -230,7 +230,7 @@ const mockApi: Api = {
       candidates,
     };
   },
-  async confirmSearch(id, goal, selected) {
+  async confirmSearch(_id, goal, selected) {
     await delay(500);
     mockAnalysisStartedAt = -Infinity;
     mockSubmittedGoal = goal;
