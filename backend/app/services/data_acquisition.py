@@ -119,7 +119,14 @@ async def run_search(
                 },
             ),
             _call_source(
-                "search_arxiv", "arxiv", {"query": query, "max_results": per_source_max}
+                "search_arxiv",
+                "arxiv",
+                {
+                    "query": query,
+                    "max_results": per_source_max,
+                    "year_from": year_from,
+                    "year_to": year_to,
+                },
             ),
         )
 

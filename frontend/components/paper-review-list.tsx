@@ -113,7 +113,7 @@ export function PaperReviewList({
                     {c.year ?? "—"}
                   </TableCell>
                   <TableCell className="text-right font-mono-tabular text-xs">
-                    {c.times_cited || "—"}
+                    {c.times_cited}
                   </TableCell>
                 </TableRow>
               );

@@ -19,6 +19,7 @@ import {
   type AgentEvent,
   type AgentName,
   type AgentUiState,
+  type RoutingDecision,
   type SessionDetail,
 } from "@/lib/types";
 
@@ -54,6 +55,39 @@ function deriveAgentStates(events: AgentEvent[]): Record<AgentName, AgentState> 
     }
   }
   return map;
+}
+
+// The Coordinator's `agent_completed` event carries the same
+// activated/skipped/justification payload that eventually lands on
+// `session.routing_decision` — but the event is persisted the moment the
+// Coordinator node finishes, while `routing_decision` isn't written to the
+// session row until the *entire* pipeline (all specialists, insights,
+// advisor) completes. Deriving from the event lets the signature
+// selective-activation card appear live instead of staying blank for the
+// whole run.
+function deriveRoutingDecisionFromEvents(events: AgentEvent[]): RoutingDecision | null {
+  const completed = events.find(
+    (e) => e.agent_name === "coordinator" && e.event_type === "agent_completed"
+  );
+  if (!completed) return null;
+  const payload = completed.payload;
+  if (payload.outcome === "clarification_needed") {
+    return {
+      activated: [],
+      skipped: [],
+      justification: "",
+      clarification_needed: true,
+      clarification_message: (payload.message as string) ?? null,
+    };
+  }
+  if (!Array.isArray(payload.activated)) return null;
+  return {
+    activated: payload.activated as string[],
+    skipped: (payload.skipped as RoutingDecision["skipped"]) ?? [],
+    justification: (payload.justification as string) ?? "",
+    clarification_needed: false,
+    clarification_message: null,
+  };
 }
 
 function formatElapsed(ms: number): string {
@@ -132,7 +166,8 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
         )
       : [];
 
-  const routingDecision = session?.routing_decision ?? null;
+  const routingDecision =
+    session?.routing_decision ?? deriveRoutingDecisionFromEvents(events);
   const needsClarification = routingDecision?.clarification_needed ?? false;
   const failed = session?.status === "failed";
 

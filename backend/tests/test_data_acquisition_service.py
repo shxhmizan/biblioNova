@@ -39,7 +39,7 @@ async def test_run_search_below_minimum_returns_clarification(monkeypatch):
     async def fake_openalex(query, max_results=50, year_from=None, year_to=None, mailto=None):
         return [_make_record("Only Paper One")]
 
-    async def fake_arxiv(query, max_results=50):
+    async def fake_arxiv(query, max_results=50, year_from=None, year_to=None):
         return [_make_record("Only Paper Two", source="arxiv")]
 
     monkeypatch.setattr(data_acquisition_server.sources, "search_openalex", fake_openalex)
@@ -77,7 +77,7 @@ async def test_run_search_above_minimum_succeeds_and_reports_sources(monkeypatch
     async def fake_openalex(query, max_results=50, year_from=None, year_to=None, mailto=None):
         return [_make_record(f"OpenAlex Paper {i}", doi=f"10.1/{i}") for i in range(4)]
 
-    async def fake_arxiv(query, max_results=50):
+    async def fake_arxiv(query, max_results=50, year_from=None, year_to=None):
         return [_make_record(f"arXiv Paper {i}", source="arxiv") for i in range(3)]
 
     monkeypatch.setattr(data_acquisition_server.sources, "search_openalex", fake_openalex)
@@ -115,7 +115,7 @@ async def test_run_search_deduplicates_across_sources(monkeypatch):
             _make_record(f"Unique OA {i}", doi=f"10.1/{i}") for i in range(4)
         ]
 
-    async def fake_arxiv(query, max_results=50):
+    async def fake_arxiv(query, max_results=50, year_from=None, year_to=None):
         return [_make_record("Shared Paper (preprint)", doi=shared_doi, source="arxiv")]
 
     monkeypatch.setattr(data_acquisition_server.sources, "search_openalex", fake_openalex)

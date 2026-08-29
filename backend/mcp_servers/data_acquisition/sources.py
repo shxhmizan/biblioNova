@@ -137,7 +137,16 @@ def normalize_arxiv_entry(entry: ET.Element) -> dict:
     }
 
 
-async def search_arxiv(query: str, max_results: int = 50) -> list[dict]:
+async def search_arxiv(
+    query: str,
+    max_results: int = 50,
+    year_from: int | None = None,
+    year_to: int | None = None,
+) -> list[dict]:
+    # The arXiv query API has no server-side publication-year filter, so
+    # year bounds are applied client-side against each entry's parsed year
+    # -- results below max_results after filtering is an accepted tradeoff,
+    # same as the OpenAlex path's per_source_max split.
     params = {
         "search_query": f"all:{query}",
         "start": 0,
@@ -156,4 +165,9 @@ async def search_arxiv(query: str, max_results: int = 50) -> list[dict]:
         return []
 
     entries = root.findall("atom:entry", ARXIV_NS)
-    return [normalize_arxiv_entry(e) for e in entries[:max_results]]
+    records = [normalize_arxiv_entry(e) for e in entries]
+    if year_from is not None:
+        records = [r for r in records if r["year"] is not None and r["year"] >= year_from]
+    if year_to is not None:
+        records = [r for r in records if r["year"] is not None and r["year"] <= year_to]
+    return records[:max_results]

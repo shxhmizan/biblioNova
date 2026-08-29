@@ -83,6 +83,20 @@ async def coordinator_node(
         state["goal"], state["corpus_stats"], available_specialists, decision_fn
     )
 
+    # Guard against a hallucinated/typo'd specialist name in `activated`:
+    # downstream (nodes/common.py maybe_skip) matches names by exact string,
+    # so an unrecognized name would otherwise silently no-op every
+    # specialist while still reporting a non-empty `activated` list.
+    known = set(available_specialists)
+    unrecognized = [a for a in decision.activated if a not in known]
+    if unrecognized:
+        decision.activated = [a for a in decision.activated if a in known]
+        decision.skipped = [s for s in decision.skipped if s.agent in known]
+        decision.justification = (
+            f"{decision.justification} (ignored unrecognized specialist name(s): "
+            f"{', '.join(unrecognized)})"
+        )
+
     if decision.clarification_needed or not decision.activated:
         await event_sink(
             "agent_completed",

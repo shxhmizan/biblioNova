@@ -52,8 +52,15 @@ def _make_key(record: dict, used_keys: Counter) -> str:
     authors = record.get("authors") or []
     last_name = "unknown"
     if authors:
-        first_author = authors[0]
-        raw_last = first_author.split(",")[0].strip().split(" ")[0]
+        first_author = authors[0].strip()
+        # Uploaded BibTeX gives "Last, First"; OpenAlex/arXiv records give
+        # plain "First Last" with no comma -- pick the surname accordingly
+        # rather than assuming one format.
+        if "," in first_author:
+            raw_last = first_author.split(",")[0].strip()
+        else:
+            name_parts = first_author.split()
+            raw_last = name_parts[-1] if name_parts else ""
         last_name = re.sub(r"[^a-z0-9]", "", raw_last.lower()) or "unknown"
 
     year = record.get("year") or "nd"

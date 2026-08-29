@@ -10,6 +10,7 @@ import numpy as np
 from langchain_openai import ChatOpenAI
 
 from agents.events import EventSink, noop_sink
+from agents.llm_retry import invoke_with_retry
 from agents.nodes.common import maybe_skip
 from agents.prompts_loader import load_prompt
 from agents.state import GraphState
@@ -34,7 +35,8 @@ async def _llm_summarize(goal: str, cluster_result: dict) -> str:
     prompt = Template(load_prompt("text_mining_summary.v1.md")).safe_substitute(
         goal=goal, result_json=json.dumps(cluster_result, indent=2)
     )
-    response = await build_summary_llm().ainvoke(prompt)
+    llm = build_summary_llm()
+    response = await invoke_with_retry(lambda: llm.ainvoke(prompt))
     return response.content
 
 

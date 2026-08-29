@@ -527,7 +527,7 @@ function PaperNetworkView({
       nodes={data.nodes.map((n) => ({
         id: n.id,
         label: n.title,
-        value: n.times_cited || 1,
+        value: n.times_cited,
         cluster: clusterByNode.get(n.id) ?? 0,
       }))}
       links={data.edges}

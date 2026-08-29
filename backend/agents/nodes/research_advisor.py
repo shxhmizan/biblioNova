@@ -64,17 +64,35 @@ async def research_advisor_node(
     for gap, rec in zip(gaps, recommendation_set.recommendations, strict=True):
         rec.addresses_gap_id = gap["id"]
 
-    await event_sink("agent_completed", "research_advisor", {"recommendation_count": len(gaps)})
-
     recommendations = [r.model_dump() for r in recommendation_set.recommendations]
 
-    pdf_bytes, page_count = generate_report_pdf(
-        goal=state["goal"],
-        corpus_stats=state["corpus_stats"],
-        summaries=state.get("summaries", {}),
-        results=state.get("results", {}),
-        gap_analysis=state["results"]["insights_reporting"],
-        recommendations=recommendations,
+    # PDF generation is best-effort: a failure here (malformed text, a
+    # reportlab/weasyprint quirk) must not discard the specialist results,
+    # gaps, and recommendations that are already fully computed at this
+    # point. The failure is surfaced via `error` instead of raised.
+    report_pdf: bytes | None = None
+    report_page_count: int | None = None
+    report_error: str | None = None
+    try:
+        report_pdf, report_page_count = generate_report_pdf(
+            goal=state["goal"],
+            corpus_stats=state["corpus_stats"],
+            summaries=state.get("summaries", {}),
+            results=state.get("results", {}),
+            gap_analysis=state["results"]["insights_reporting"],
+            recommendations=recommendations,
+        )
+    except Exception as exc:  # noqa: BLE001 - report failure must not discard the analysis
+        report_error = f"Report PDF generation failed: {exc}"
+
+    await event_sink(
+        "agent_completed",
+        "research_advisor",
+        {
+            "recommendation_count": len(gaps),
+            "report_generated": report_pdf is not None,
+            **({"report_error": report_error} if report_error else {}),
+        },
     )
 
     return {
@@ -83,6 +101,7 @@ async def research_advisor_node(
             **state.get("results", {}),
             "research_advisor": {"recommendations": recommendations},
         },
-        "report_pdf": pdf_bytes,
-        "report_page_count": page_count,
+        "report_pdf": report_pdf,
+        "report_page_count": report_page_count,
+        "error": report_error,
     }

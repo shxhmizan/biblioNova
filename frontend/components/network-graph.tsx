@@ -93,12 +93,26 @@ export function NetworkGraph({
   // restarts the simulation from scratch, undoing whatever it had settled
   // into (this is what made fullscreen/resize look like it kept "resetting
   // and slowly re-settling" rather than just re-fitting the existing layout).
+  //
+  // Callers routinely pass a fresh `nodes.map(...)` array literal each
+  // render (there's no way to enforce memoization at every call site), so
+  // stability is keyed on a content signature rather than the array
+  // references themselves — any render where the underlying data is
+  // unchanged reuses the exact same graphData object.
+  const graphSignature = JSON.stringify([
+    nodes.map((n) => [n.id, n.label, n.value, n.cluster]),
+    links.map((l) => [l.source, l.target, l.weight]),
+  ]);
   const graphData = React.useMemo(
     () => ({
       nodes: nodes.map((n) => ({ ...n })),
       links: links.map((l) => ({ ...l })),
     }),
-    [nodes, links]
+    // Keyed on the content signature, not `nodes`/`links` themselves —
+    // callers routinely pass a fresh array literal each render, which would
+    // defeat a dependency on the references directly.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graphSignature]
   );
 
   // VOSviewer-style permanent labels (not just hover tooltips) — drawn in

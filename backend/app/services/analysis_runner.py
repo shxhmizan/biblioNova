@@ -60,6 +60,9 @@ async def run_analysis(session_id: str) -> None:
                 )
             )
 
+        if final_state.get("error"):
+            session.error_message = final_state["error"]
+
         session.status = "completed"
         db.commit()
     finally:

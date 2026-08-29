@@ -63,6 +63,8 @@ export default function SessionsPage() {
   const router = useRouter();
   const [sessions, setSessions] = React.useState<SessionListItem[] | null>(null);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [deleteError, setDeleteError] = React.useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const load = React.useCallback(() => {
     api.listSessions().then(setSessions);
@@ -71,9 +73,17 @@ export default function SessionsPage() {
   React.useEffect(load, [load]);
 
   async function handleDelete(id: string) {
-    setDeletingId(null);
-    await api.deleteSession(id);
-    load();
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.deleteSession(id);
+      setDeletingId(null);
+      load();
+    } catch {
+      setDeleteError("Couldn't delete this session. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   return (
@@ -156,7 +166,10 @@ export default function SessionsPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Dialog
                         open={deletingId === session.id}
-                        onOpenChange={(open) => setDeletingId(open ? session.id : null)}
+                        onOpenChange={(open) => {
+                          setDeletingId(open ? session.id : null);
+                          if (!open) setDeleteError(null);
+                        }}
                       >
                         <DialogTrigger
                           render={
@@ -173,12 +186,23 @@ export default function SessionsPage() {
                               analysis results. This can&apos;t be undone.
                             </DialogDescription>
                           </DialogHeader>
+                          {deleteError && (
+                            <p className="text-xs text-destructive">{deleteError}</p>
+                          )}
                           <DialogFooter>
-                            <Button variant="outline" onClick={() => setDeletingId(null)}>
+                            <Button
+                              variant="outline"
+                              disabled={isDeleting}
+                              onClick={() => setDeletingId(null)}
+                            >
                               Cancel
                             </Button>
-                            <Button variant="destructive" onClick={() => handleDelete(session.id)}>
-                              Delete
+                            <Button
+                              variant="destructive"
+                              disabled={isDeleting}
+                              onClick={() => handleDelete(session.id)}
+                            >
+                              {isDeleting ? "Deleting…" : "Delete"}
                             </Button>
                           </DialogFooter>
                         </DialogContent>

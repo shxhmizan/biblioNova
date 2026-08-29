@@ -37,14 +37,23 @@ async def search_openalex(
 
 
 @mcp.tool()
-async def search_arxiv(query: str, max_results: int = 50) -> list[dict]:
+async def search_arxiv(
+    query: str,
+    max_results: int = 50,
+    year_from: int | None = None,
+    year_to: int | None = None,
+) -> list[dict]:
     """Search the arXiv API for preprints matching a research area/title.
 
     Args:
         query: Free-text research area or title to search for.
         max_results: Maximum number of results to return.
+        year_from: Optional inclusive lower bound on publication year.
+        year_to: Optional inclusive upper bound on publication year.
     """
-    return await sources.search_arxiv(query, max_results=max_results)
+    return await sources.search_arxiv(
+        query, max_results=max_results, year_from=year_from, year_to=year_to
+    )
 
 
 @mcp.tool()
