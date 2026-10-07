@@ -15,7 +15,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { api, ApiError } from "@/lib/api";
 import type { AcquisitionCandidate } from "@/lib/types";
 
-const MIN_GOAL_LENGTH = 20;
 const MIN_QUERY_LENGTH = 3;
 
 type Mode = "upload" | "search";
@@ -43,13 +42,13 @@ export default function NewAnalysisPage() {
   const [clarificationMessage, setClarificationMessage] = React.useState<string | null>(null);
   const [searchGoal, setSearchGoal] = React.useState("");
 
-  const canSubmitUpload = file !== null && goal.trim().length >= MIN_GOAL_LENGTH && !submitting;
+  const canSubmitUpload = file !== null && goal.trim().length > 0 && !submitting;
   const canSearch = query.trim().length >= MIN_QUERY_LENGTH && searchPhase !== "searching";
   const selectedCandidates = candidates.filter((c) => selected.has(c.bibtex_key));
   const canRunSearchAnalysis =
     searchSessionId !== null &&
     selectedCandidates.length > 0 &&
-    searchGoal.trim().length >= MIN_GOAL_LENGTH &&
+    searchGoal.trim().length > 0 &&
     !submitting;
 
   async function handleUploadSubmit() {
@@ -232,7 +231,7 @@ export default function NewAnalysisPage() {
               <p className="text-xs text-muted-foreground">
                 {canSubmitUpload
                   ? "Ready to run — the Coordinator will decide which specialists to activate."
-                  : "Add a dataset and a research goal (min 20 characters) to continue."}
+                  : "Add a dataset and a research goal to continue."}
               </p>
               <Button onClick={handleUploadSubmit} disabled={!canSubmitUpload}>
                 {submitting && <Loader2 className="size-4 animate-spin" />}
@@ -274,7 +273,7 @@ export default function NewAnalysisPage() {
                   ? "Select at least one paper to continue."
                   : canRunSearchAnalysis
                     ? "Ready to run — the Coordinator will decide which specialists to activate."
-                    : "Add a research goal (min 20 characters) to continue."}
+                    : "Add a research goal to continue."}
               </p>
               <Button onClick={handleRunSearchAnalysis} disabled={!canRunSearchAnalysis}>
                 {submitting && <Loader2 className="size-4 animate-spin" />}

@@ -1,9 +1,6 @@
 "use client";
 
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-
-const MIN_LENGTH = 20;
 
 const EXAMPLE_GOALS = [
   "Identify research gaps in agentic AI applications for healthcare between 2020 and 2026",
@@ -18,8 +15,6 @@ export function GoalInput({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const remaining = MIN_LENGTH - value.trim().length;
-
   return (
     <div>
       <Textarea
@@ -30,14 +25,7 @@ export function GoalInput({
         maxLength={2000}
       />
       <div className="mt-1.5 flex items-center justify-between">
-        <span
-          className={cn(
-            "text-xs",
-            remaining > 0 ? "text-muted-foreground" : "text-[var(--status-good)]"
-          )}
-        >
-          {remaining > 0 ? `${remaining} more characters needed` : `${value.length} characters`}
-        </span>
+        <span className="text-xs text-muted-foreground">{value.length} characters</span>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">

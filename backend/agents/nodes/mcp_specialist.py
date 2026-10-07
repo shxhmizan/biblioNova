@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 
 from agents.events import EventSink, noop_sink
 from agents.mcp_client import discover_tools, parse_tool_result
-from agents.nodes.common import maybe_skip
+from agents.nodes.common import condense_for_prompt, maybe_skip
 from agents.prompts_loader import load_prompt
 from agents.state import GraphState
 from app.config import settings
@@ -35,7 +35,7 @@ def build_summary_llm() -> ChatOpenAI:
 
 async def _llm_summarize(goal: str, combined_result: dict, prompt_name: str) -> str:
     prompt = Template(load_prompt(prompt_name)).safe_substitute(
-        goal=goal, result_json=json.dumps(combined_result, indent=2)
+        goal=goal, result_json=json.dumps(condense_for_prompt(combined_result), indent=2)
     )
     response = await build_summary_llm().ainvoke(prompt)
     return response.content

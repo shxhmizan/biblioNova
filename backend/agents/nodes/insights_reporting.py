@@ -16,6 +16,7 @@ from langchain_openai import ChatOpenAI
 
 from agents.events import EventSink, noop_sink
 from agents.llm_retry import invoke_with_retry
+from agents.nodes.common import condense_for_prompt
 from agents.prompts_loader import load_prompt
 from agents.schemas import GapAnalysis
 from agents.state import GraphState
@@ -77,7 +78,9 @@ def _condense_result(agent_name: str, result: dict) -> dict:
                 for c in result.get("clusters", [])
             ],
         }
-    return result  # bibliometric_analyst is already compact (top-10 lists)
+    # bibliometric_analyst's top-10 lists are already compact, but
+    # coauthorship_network_analysis's full author graph is not.
+    return condense_for_prompt(result)
 
 
 async def _llm_identify_gaps(

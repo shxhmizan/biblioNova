@@ -22,7 +22,7 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 @router.post("", response_model=SessionCreateResponse, status_code=201)
 async def create_session(
     file: UploadFile,
-    goal: str = Form(..., min_length=20),
+    goal: str = Form(..., min_length=1),
     db: DBSession = Depends(get_db),
 ) -> AnalysisSession:
     if not file.filename or not file.filename.lower().endswith(".bib"):

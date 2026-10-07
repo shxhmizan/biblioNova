@@ -142,5 +142,5 @@ class SelectedRecord(BaseModel):
 
 
 class AcquisitionConfirmRequest(BaseModel):
-    goal: str = Field(..., min_length=20)
+    goal: str = Field(..., min_length=1)
     selected: list[SelectedRecord] = Field(..., min_length=1)
