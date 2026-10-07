@@ -191,7 +191,7 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
         )}
 
         {/* Coordinator decision card */}
-        <div className="rounded-lg border bg-card p-5">
+        <div className="surface-raised rounded-2xl p-5">
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Coordinator
           </span>
@@ -265,7 +265,7 @@ export default function ProgressPage({ params }: { params: Promise<{ id: string 
             {/* Process log — every agent_started/skipped/completed and MCP
                 tool_discovered/tool_called event, in order, persisted
                 server-side so it's inspectable even after the run finishes. */}
-            <div className="rounded-lg border bg-card">
+            <div className="surface-raised rounded-xl">
               <button
                 onClick={() => setLogOpen((v) => !v)}
                 className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground"

@@ -21,7 +21,7 @@ export function GoalInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="e.g. Identify research gaps in agentic AI applications for healthcare between 2020 and 2026"
-        className="min-h-32 resize-none"
+        className="min-h-36 resize-none bg-card/35 p-3 leading-relaxed"
         maxLength={2000}
       />
       <div className="mt-1.5 flex items-center justify-between">
@@ -34,7 +34,7 @@ export function GoalInput({
             key={goal}
             type="button"
             onClick={() => onChange(goal)}
-            className="rounded-full border bg-muted/50 px-2.5 py-1 text-left text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded-lg border border-border bg-card/65 px-2.5 py-1.5 text-left text-[11px] text-muted-foreground shadow-[inset_0_1px_0_var(--surface-highlight)] transition-all hover:-translate-y-px hover:border-primary/40 hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
           >
             {goal}
           </button>

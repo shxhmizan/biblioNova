@@ -15,7 +15,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-sidebar-border bg-sidebar pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-sidebar-border bg-sidebar/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-18px_var(--surface-deep)] backdrop-blur-xl md:hidden">
       {NAV_ITEMS.map((item) => {
         const active =
           item.href === "/analyze" ? pathname === "/analyze" : pathname.startsWith(item.href);

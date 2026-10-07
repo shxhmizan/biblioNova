@@ -136,6 +136,11 @@ export default function NewAnalysisPage() {
       <Topbar breadcrumb={[{ label: "New Analysis" }]} />
 
       <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 pb-28 md:px-6">
+        <div className="mb-7 max-w-2xl">
+          <span className="text-[10px] font-semibold tracking-[0.16em] text-primary uppercase">Analysis workbench</span>
+          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-foreground">Set up your research brief</h1>
+          <p className="mt-2 leading-6 text-muted-foreground">Bring a BibTeX corpus or discover papers, then give the Coordinator a clear research question.</p>
+        </div>
         {error && (
           <Alert variant="destructive" className="mb-6">
             <AlertTitle>Couldn&apos;t start analysis</AlertTitle>
@@ -158,21 +163,24 @@ export default function NewAnalysisPage() {
         </Tabs>
 
         {mode === "upload" && (
-          <div className="grid gap-8 md:grid-cols-2">
-            <div>
-              <h2 className="mb-3 text-sm font-medium text-foreground">Dataset</h2>
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="surface-raised rounded-2xl p-5">
+              <span className="mb-1 block text-[10px] font-semibold tracking-[0.14em] text-primary uppercase">01 · Source material</span>
+              <h2 className="mb-4 text-base font-semibold text-foreground">Dataset</h2>
               <UploadDropzone file={file} onFileChange={setFile} />
             </div>
-            <div>
-              <h2 className="mb-3 text-sm font-medium text-foreground">Research goal</h2>
+            <div className="surface-raised rounded-2xl p-5">
+              <span className="mb-1 block text-[10px] font-semibold tracking-[0.14em] text-primary uppercase">02 · Research direction</span>
+              <h2 className="mb-4 text-base font-semibold text-foreground">Research goal</h2>
               <GoalInput value={goal} onChange={setGoal} />
             </div>
           </div>
         )}
 
         {mode === "search" && searchPhase === "idle" && (
-          <div className="max-w-lg">
-            <h2 className="mb-3 text-sm font-medium text-foreground">Research area</h2>
+          <div className="surface-raised max-w-lg rounded-2xl p-5">
+            <span className="mb-1 block text-[10px] font-semibold tracking-[0.14em] text-primary uppercase">Discover a corpus</span>
+            <h2 className="mb-4 text-base font-semibold text-foreground">Research area</h2>
             <PaperSearchForm
               query={query}
               onQueryChange={setQuery}
@@ -187,13 +195,13 @@ export default function NewAnalysisPage() {
         )}
 
         {mode === "search" && searchPhase === "searching" && (
-          <div className="max-w-lg">
+          <div className="surface-raised max-w-lg rounded-2xl p-5">
             <AcquisitionProgress query={query.trim()} />
           </div>
         )}
 
         {mode === "search" && searchPhase === "clarification" && (
-          <div className="max-w-lg space-y-4">
+          <div className="surface-raised max-w-lg space-y-4 rounded-2xl p-5">
             <Alert variant="destructive">
               <AlertTitle>Not enough matching papers</AlertTitle>
               <AlertDescription>{clarificationMessage}</AlertDescription>
@@ -224,7 +232,7 @@ export default function NewAnalysisPage() {
         )}
       </div>
 
-      <div className="sticky bottom-14 z-20 border-t bg-background/95 px-4 py-4 backdrop-blur md:bottom-0 md:px-6">
+      <div className="sticky bottom-14 z-20 border-t border-border bg-card/85 px-4 py-4 shadow-[0_-8px_24px_-18px_var(--surface-deep),inset_0_1px_0_var(--surface-highlight)] backdrop-blur-xl md:bottom-0 md:px-6">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
           {mode === "upload" && (
             <>

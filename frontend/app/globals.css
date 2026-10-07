@@ -55,31 +55,30 @@
 }
 
 /*
- * Design direction: academic research tool, not a SaaS marketing site.
- * Light mode: slate base, restrained. Dark mode (default): deep navy/slate,
- * one electric-indigo accent used sparingly for agent activity + primary
- * actions. Chart series colors are the validated dataviz reference palette
- * (see lib/chart-colors.ts) — kept separate from this UI chrome palette.
+ * BiblioAgent's visual language is a contemporary research instrument: an
+ * ebonized desk, inset work wells, and raised paper-like controls. The depth
+ * is deliberately functional: controls look pressable, inputs look writable,
+ * and analysis panels read as artifacts placed on a workspace.
  */
 :root {
-  --background: oklch(0.985 0.002 247);
-  --foreground: oklch(0.19 0.02 265);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.19 0.02 265);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.02 265);
-  --primary: oklch(0.51 0.22 265);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 260);
-  --secondary-foreground: oklch(0.26 0.03 265);
-  --muted: oklch(0.96 0.008 260);
-  --muted-foreground: oklch(0.5 0.03 260);
-  --accent: oklch(0.94 0.03 265);
-  --accent-foreground: oklch(0.32 0.1 265);
+  --background: #e6e1d7;
+  --foreground: #24262c;
+  --card: #f4f1ea;
+  --card-foreground: #24262c;
+  --popover: #f7f4ed;
+  --popover-foreground: #24262c;
+  --primary: #315ea8;
+  --primary-foreground: #f9fbff;
+  --secondary: #dad5ca;
+  --secondary-foreground: #383b42;
+  --muted: #e1ddd3;
+  --muted-foreground: #6d6d6a;
+  --accent: #dce5f4;
+  --accent-foreground: #274c89;
   --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.9 0.01 260);
-  --input: oklch(0.9 0.01 260);
-  --ring: oklch(0.51 0.22 265 / 0.5);
+  --border: #c8c3b9;
+  --input: #d5d0c6;
+  --ring: rgb(49 94 168 / 0.5);
   --chart-1: #2a78d6;
   --chart-2: #1baf7a;
   --chart-3: #eda100;
@@ -92,36 +91,39 @@
   --status-warning: #fab219;
   --status-serious: #ec835a;
   --status-critical: #d03b3b;
-  --radius: 0.5rem;
-  --sidebar: oklch(0.975 0.004 255);
-  --sidebar-foreground: oklch(0.19 0.02 265);
-  --sidebar-primary: oklch(0.51 0.22 265);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.03 265);
-  --sidebar-accent-foreground: oklch(0.32 0.1 265);
-  --sidebar-border: oklch(0.9 0.01 260);
-  --sidebar-ring: oklch(0.51 0.22 265 / 0.5);
+  --radius: 0.9rem;
+  --sidebar: #e0dcd2;
+  --sidebar-foreground: #292b30;
+  --sidebar-primary: #315ea8;
+  --sidebar-primary-foreground: #f9fbff;
+  --sidebar-accent: #eeeae1;
+  --sidebar-accent-foreground: #244880;
+  --sidebar-border: #c5c0b6;
+  --sidebar-ring: rgb(49 94 168 / 0.5);
+  --surface-highlight: rgb(255 255 255 / 0.76);
+  --surface-shadow: rgb(72 66 54 / 0.18);
+  --surface-deep: rgb(105 99 88 / 0.24);
 }
 
 .dark {
-  --background: oklch(0.16 0.02 260);
-  --foreground: oklch(0.97 0.005 260);
-  --card: oklch(0.2 0.02 260);
-  --card-foreground: oklch(0.97 0.005 260);
-  --popover: oklch(0.2 0.02 260);
-  --popover-foreground: oklch(0.97 0.005 260);
-  --primary: oklch(0.63 0.19 265);
-  --primary-foreground: oklch(0.14 0.02 260);
-  --secondary: oklch(0.26 0.025 260);
-  --secondary-foreground: oklch(0.94 0.005 260);
-  --muted: oklch(0.24 0.02 260);
-  --muted-foreground: oklch(0.68 0.03 258);
-  --accent: oklch(0.29 0.05 265);
-  --accent-foreground: oklch(0.88 0.05 265);
+  --background: #101624;
+  --foreground: #f0eee8;
+  --card: #1d2635;
+  --card-foreground: #f0eee8;
+  --popover: #202b3c;
+  --popover-foreground: #f0eee8;
+  --primary: #6e9eff;
+  --primary-foreground: #101827;
+  --secondary: #273246;
+  --secondary-foreground: #e7e9ed;
+  --muted: #202b3b;
+  --muted-foreground: #aab4c5;
+  --accent: #293c5a;
+  --accent-foreground: #dce7ff;
   --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.63 0.19 265 / 0.55);
+  --border: #344157;
+  --input: #303d53;
+  --ring: rgb(110 158 255 / 0.58);
   --chart-1: #3987e5;
   --chart-2: #199e70;
   --chart-3: #c98500;
@@ -134,14 +136,17 @@
   --status-warning: #fab219;
   --status-serious: #ec835a;
   --status-critical: #d03b3b;
-  --sidebar: oklch(0.14 0.02 260);
-  --sidebar-foreground: oklch(0.97 0.005 260);
-  --sidebar-primary: oklch(0.63 0.19 265);
-  --sidebar-primary-foreground: oklch(0.14 0.02 260);
-  --sidebar-accent: oklch(0.29 0.05 265);
-  --sidebar-accent-foreground: oklch(0.88 0.05 265);
-  --sidebar-border: oklch(1 0 0 / 9%);
-  --sidebar-ring: oklch(0.63 0.19 265 / 0.55);
+  --sidebar: #151d2b;
+  --sidebar-foreground: #f0eee8;
+  --sidebar-primary: #6e9eff;
+  --sidebar-primary-foreground: #101827;
+  --sidebar-accent: #263751;
+  --sidebar-accent-foreground: #e4ecff;
+  --sidebar-border: #303c50;
+  --sidebar-ring: rgb(110 158 255 / 0.58);
+  --surface-highlight: rgb(255 255 255 / 0.085);
+  --surface-shadow: rgb(1 5 13 / 0.62);
+  --surface-deep: rgb(2 8 20 / 0.72);
 }
 
 @layer base {
@@ -164,6 +169,12 @@
     overflow-x: clip;
     max-width: 100%;
   }
+  body {
+    background-image:
+      radial-gradient(circle at 20% -10%, rgb(110 158 255 / 0.1), transparent 31rem),
+      radial-gradient(circle at 85% 5%, rgb(225 183 92 / 0.055), transparent 25rem),
+      repeating-linear-gradient(0deg, rgb(255 255 255 / 0.014) 0 1px, transparent 1px 4px);
+  }
   html {
     @apply font-sans;
   }
@@ -172,5 +183,42 @@
 @layer utilities {
   .font-mono-tabular {
     font-variant-numeric: tabular-nums;
+  }
+
+  .surface-raised {
+    border: 1px solid var(--border);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--card) 96%, white), var(--card));
+    box-shadow:
+      inset 0 1px 0 var(--surface-highlight),
+      0 1px 1px var(--surface-shadow),
+      0 10px 22px -18px var(--surface-deep);
+  }
+
+  .surface-inset {
+    border: 1px solid color-mix(in srgb, var(--border) 82%, var(--surface-deep));
+    background: color-mix(in srgb, var(--background) 70%, var(--surface-deep));
+    box-shadow:
+      inset 0 2px 4px var(--surface-deep),
+      inset 0 1px 0 var(--surface-highlight);
+  }
+
+  .app-canvas {
+    position: relative;
+    min-height: 100%;
+  }
+
+  .app-canvas::before {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+    opacity: 0.32;
+    background-image: repeating-linear-gradient(90deg, transparent 0 5px, rgb(255 255 255 / 0.018) 5px 6px);
+  }
+
+  .metal-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border) 10%, var(--surface-highlight) 50%, var(--border) 90%, transparent);
   }
 }

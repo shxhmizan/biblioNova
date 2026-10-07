@@ -91,6 +91,14 @@ export default function SessionsPage() {
       <Topbar breadcrumb={[{ label: "Sessions" }]} />
 
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="text-[10px] font-semibold tracking-[0.16em] text-primary uppercase">Research archive</span>
+            <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em]">Analysis sessions</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Return to a completed evidence trail or continue work in progress.</p>
+          </div>
+          <LinkButton href="/analyze" size="sm">New analysis</LinkButton>
+        </div>
         {sessions === null && (
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -100,8 +108,8 @@ export default function SessionsPage() {
         )}
 
         {sessions?.length === 0 && (
-          <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed py-20 text-center">
-            <FolderOpen className="size-8 text-muted-foreground" strokeWidth={1.5} />
+          <div className="surface-inset flex flex-col items-center gap-3 rounded-2xl border-dashed py-20 text-center">
+            <span className="flex size-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-[inset_0_1px_0_var(--surface-highlight)]"><FolderOpen className="size-7" strokeWidth={1.5} /></span>
             <p className="text-sm font-medium text-foreground">No analyses yet</p>
             <p className="max-w-xs text-xs text-muted-foreground">
               Upload a BibTeX dataset and state a research goal to run your first analysis.
@@ -113,7 +121,7 @@ export default function SessionsPage() {
         )}
 
         {sessions !== null && sessions.length > 0 && (
-          <div className="overflow-x-auto rounded-lg border bg-card">
+          <div className="surface-raised overflow-x-auto rounded-2xl">
             <Table>
               <TableHeader>
                 <TableRow>

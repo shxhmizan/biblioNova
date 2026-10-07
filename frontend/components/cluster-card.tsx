@@ -4,7 +4,7 @@ import { categoricalColor } from "@/lib/chart-colors";
 export function ClusterCard({ cluster, mode }: { cluster: SemanticCluster; mode: "light" | "dark" }) {
   const color = categoricalColor(cluster.cluster_id, mode);
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="surface-raised rounded-xl p-4">
       <div className="flex items-center gap-2">
         <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} aria-hidden />
         <h3 className="font-medium text-foreground">{cluster.label}</h3>

@@ -225,7 +225,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             />
           </div>
           {session.executive_summary && (
-            <div className="rounded-lg border bg-card p-4">
+            <div className="surface-raised rounded-xl p-5">
               <h2 className="mb-2 text-sm font-medium text-foreground">Executive Summary</h2>
               <p className="text-sm text-muted-foreground">{session.executive_summary}</p>
             </div>
@@ -245,7 +245,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             <div className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 {bibliometric.publication_trend && (
-                  <div className="rounded-lg border bg-card p-4">
+                  <div className="surface-raised rounded-xl p-4">
                     <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Publications per year
                     </h3>
@@ -257,7 +257,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                   </div>
                 )}
                 {bibliometric.publication_trend && (
-                  <div className="rounded-lg border bg-card p-4">
+                  <div className="surface-raised rounded-xl p-4">
                     <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Citations per year
                     </h3>
@@ -393,7 +393,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 </h3>
                 <WordCloud clusters={textMining.clusters} mode={mode} />
               </div>
-              <div className="rounded-lg border bg-card p-4">
+              <div className="surface-raised rounded-xl p-4">
                 <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Embedding space (2D projection)
                 </h3>
@@ -447,7 +447,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         {/* Report */}
         <section id="report" className="scroll-mt-16 space-y-4">
           <h2 className="text-lg font-semibold">Report</h2>
-          <div className="flex items-center gap-4 rounded-lg border bg-card p-4">
+          <div className="surface-raised flex items-center gap-4 rounded-xl p-4">
             <div className="flex size-14 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
               <FileText className="size-6" strokeWidth={1.5} />
             </div>
@@ -480,7 +480,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             evaluation data, not just a live-progress artifact. */}
         <section id="activity-log" className="scroll-mt-16 space-y-4">
           <h2 className="text-lg font-semibold">Activity Log</h2>
-          <div className="rounded-lg border bg-card">
+          <div className="surface-raised rounded-xl">
             <button
               onClick={() => setLogOpen((v) => !v)}
               className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground"
@@ -543,7 +543,7 @@ function RankTable({
   rows: { name: string; citations: number; count: number }[];
 }) {
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="surface-raised rounded-xl p-4">
       <h3 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>

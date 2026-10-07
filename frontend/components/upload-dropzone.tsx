@@ -48,9 +48,9 @@ export function UploadDropzone({
 
   if (file) {
     return (
-      <div className="rounded-lg border bg-card p-4">
+      <div className="surface-raised rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary shadow-[inset_0_1px_0_var(--surface-highlight)]">
             <FileText className="size-4" />
           </div>
           <div className="min-w-0 flex-1">
@@ -91,12 +91,14 @@ export function UploadDropzone({
           if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
         }}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-2.5 rounded-lg border-2 border-dashed px-6 py-12 text-center transition-colors",
-          dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30",
+          "surface-inset flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-all",
+          dragActive ? "border-primary bg-primary/10 shadow-[inset_0_2px_8px_var(--surface-deep)]" : "border-border hover:border-primary/50 hover:bg-muted/45",
           displayError && "border-destructive/50"
         )}
       >
-        <Upload className="size-6 text-muted-foreground" strokeWidth={1.5} />
+        <span className="flex size-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-[inset_0_1px_0_var(--surface-highlight),0_6px_12px_-10px_var(--primary)]">
+          <Upload className="size-6" strokeWidth={1.5} />
+        </span>
         <div>
           <p className="text-sm font-medium text-foreground">
             Drag and drop your .bib file, or click to browse
@@ -117,7 +119,7 @@ export function UploadDropzone({
       <button
         type="button"
         onClick={tryWithSample}
-        className="mt-3 text-xs text-primary hover:underline"
+        className="mt-3 inline-flex rounded-lg px-1 text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring"
       >
         Try with sample: LLM/agentic AI research corpus
       </button>

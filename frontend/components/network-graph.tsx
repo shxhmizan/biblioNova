@@ -211,13 +211,13 @@ export function NetworkGraph({
     <div
       ref={containerRef}
       className={cn(
-        "relative rounded-lg border bg-card",
+        "surface-raised relative rounded-xl",
         fullscreen && "fixed inset-4 z-50 shadow-2xl"
       )}
     >
       <div className="absolute right-2 top-2 z-10 flex items-center gap-2">
         {clusterLabels && (
-          <div className="hidden items-center gap-3 rounded-md border bg-card/90 px-2.5 py-1.5 text-[11px] text-muted-foreground backdrop-blur sm:flex">
+          <div className="hidden items-center gap-3 rounded-lg border border-border bg-card/90 px-2.5 py-1.5 text-[11px] text-muted-foreground shadow-[inset_0_1px_0_var(--surface-highlight)] backdrop-blur sm:flex">
             {clusterLabels.map((label, i) => (
               <span key={label} className="flex items-center gap-1.5">
                 <span

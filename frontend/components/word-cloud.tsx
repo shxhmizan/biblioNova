@@ -143,7 +143,7 @@ export function WordCloud({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg border bg-card"
+      className="surface-raised relative overflow-hidden rounded-xl"
       style={{ height: CLOUD_HEIGHT }}
     >
       <span className="sr-only">

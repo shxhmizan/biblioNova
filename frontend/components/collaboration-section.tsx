@@ -79,7 +79,7 @@ export function CollaborationSection({
       />
 
       {data.top_collaborating_pairs.length > 0 && (
-        <div className="rounded-lg border bg-card p-4">
+        <div className="surface-raised rounded-xl p-4">
           <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Top collaborating pairs
           </h4>

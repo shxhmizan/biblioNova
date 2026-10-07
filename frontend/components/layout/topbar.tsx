@@ -47,7 +47,7 @@ export function Topbar({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 md:px-6">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/90 bg-card/45 px-4 py-3 shadow-[inset_0_-1px_0_var(--surface-highlight)] backdrop-blur-xl md:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
           {breadcrumb.map((item, i) => (

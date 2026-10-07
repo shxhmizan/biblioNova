@@ -3,7 +3,7 @@ import type { Gap } from "@/lib/types";
 
 export function GapCard({ gap, index }: { gap: Gap; index: number }) {
   return (
-    <div id={gap.id} className="rounded-lg border bg-card p-4 scroll-mt-20">
+    <div id={gap.id} className="surface-raised rounded-xl p-4 scroll-mt-20">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">

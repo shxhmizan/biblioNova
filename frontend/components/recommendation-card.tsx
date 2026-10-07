@@ -9,7 +9,7 @@ export function RecommendationCard({
   gapTitle?: string;
 }) {
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="surface-raised rounded-xl p-4">
       <div className="flex items-start gap-2.5">
         <Lightbulb className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={2} />
         <h3 className="font-medium text-foreground">{recommendation.topic}</h3>
